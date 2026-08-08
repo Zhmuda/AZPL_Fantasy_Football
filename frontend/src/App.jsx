@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Layout/Navbar";
 import AuthPage from "./pages/Auth/AuthPage";
 import PlayersPage from "./pages/Players/PlayersPage";
@@ -18,6 +18,14 @@ export default function App() {
 }
 
 function Layout() {
+  const { user, loading } = useAuth();
+
+  // Ждём, пока AuthContext проверит токен из localStorage — иначе успеем
+  // мигнуть редиректом на /auth даже для уже залогиненного пользователя.
+  if (loading) return null;
+
+  if (!user) return <Navigate to="/auth" replace />;
+
   return (
     <>
       <Navbar />
