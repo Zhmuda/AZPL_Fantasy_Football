@@ -34,6 +34,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    # Bound to localhost only — the host's own nginx (shared with other
+    # projects on this box) reverse-proxies to this port. Not reachable
+    # directly from the internet.
+    ports:
+      - "127.0.0.1:8001:8000"
 
   collector:
     build: ./collector
@@ -63,33 +68,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
     restart: unless-stopped
-
-  nginx:
-    image: nginx:alpine
+    # Same deal — the host's nginx proxies to this, not published publicly.
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
-      - certbot_certs:/etc/letsencrypt:ro
-      - certbot_www:/var/www/certbot:ro
-    depends_on:
-      - backend
-      - frontend
-    restart: unless-stopped
-
-  # Renews the cert in the background every 12h (no-ops until it's within its
-  # renewal window). Get the FIRST cert manually — see nginx/nginx.prod.conf.
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot_certs:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    entrypoint: >
-      /bin/sh -c "trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;"
-    restart: unless-stopped
+      - "127.0.0.1:5174:80"
 
 volumes:
   postgres_data:
-  certbot_certs:
-  certbot_www:
