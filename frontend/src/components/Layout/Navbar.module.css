@@ -1,0 +1,64 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand { display: flex; align-items: center; gap: 8px; }
+.logo  { font-size: 20px; }
+.title { font-weight: 700; font-size: 16px; color: var(--primary); letter-spacing: -.3px; }
+
+.links { display: flex; gap: 4px; flex: 1; }
+
+.links a {
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-weight: 500;
+  transition: color .15s, background .15s;
+}
+.links a:hover { color: var(--text); background: var(--surface2); }
+.links a.active { color: var(--text); background: var(--surface2); }
+
+.right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.username { color: var(--muted); font-size: 13px; }
+
+.langSelect {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.langSelect:hover { color: var(--text); border-color: var(--text); }
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  transition: color .15s, border-color .15s;
+}
+.btn:hover { color: var(--text); border-color: var(--text); }
+
+.btnPrimary {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--primary);
+  color: #000;
+  font-weight: 600;
+  transition: background .15s;
+}
+.btnPrimary:hover { background: var(--primary-h); color: #fff; }

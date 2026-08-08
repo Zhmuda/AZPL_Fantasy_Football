@@ -1,0 +1,183 @@
+.pitch {
+  position: relative;
+  width: 100%;
+  height: 460px;
+  background: linear-gradient(
+    180deg,
+    #1e5c28 0%,
+    #226330 10%,
+    #1e5c28 20%,
+    #226330 30%,
+    #1e5c28 40%,
+    #226330 50%,
+    #1e5c28 60%,
+    #226330 70%,
+    #1e5c28 80%,
+    #226330 90%,
+    #1e5c28 100%
+  );
+  border-radius: 10px;
+  border: 2px solid #2d7a36;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+/* Field markings */
+.centerLine {
+  position: absolute;
+  left: 5%; right: 5%;
+  top: 50%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.centerCircle {
+  position: absolute;
+  width: 22%;
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.penaltyTop, .penaltyBot {
+  position: absolute;
+  left: 27%; right: 27%;
+  height: 14%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+.penaltyTop { top: 0; border-top: none; border-radius: 0 0 6px 6px; }
+.penaltyBot { bottom: 0; border-bottom: none; border-radius: 6px 6px 0 0; }
+
+/* Player token */
+.token {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.circle {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+  border: 2.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
+  user-select: none;
+}
+.circle:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.posG { background: #d97706; }
+.posD { background: #2563eb; }
+.posM { background: #059669; }
+.posF { background: #dc2626; }
+
+.capBadge, .vcBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+  border: 1.5px solid #fff;
+  line-height: 1;
+}
+.capBadge { background: #f59e0b; color: #000; }
+.vcBadge  { background: #7c3aed; color: #fff; }
+
+.circleInactive { filter: grayscale(0.8); opacity: 0.55; }
+
+.warnBadge {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  border: 1.5px solid #fff;
+  line-height: 1;
+  background: #dc2626;
+  color: #fff;
+}
+
+.name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.pts {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Context menu */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e2229;
+  border: 1px solid #3a3f4a;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 150px;
+  z-index: 100;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.menu button {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #d1d5db;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+  white-space: nowrap;
+}
+.menu button:hover { background: #2d3340; color: #fff; }
+
+.rmBtn { color: #f87171 !important; }
+.rmBtn:hover { background: #2d1f1f !important; }

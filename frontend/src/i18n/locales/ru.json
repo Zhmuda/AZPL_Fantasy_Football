@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "brand": "AZPL Fantasy",
+    "players": "Игроки",
+    "myTeam": "Моя команда",
+    "leaderboard": "Таблица",
+    "logout": "Выйти",
+    "login": "Войти"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "allClubs": "Все клубы",
+    "searchByName": "Поиск по имени...",
+    "anyPrice": "Любая цена",
+    "upTo": "до £{{price}}m",
+    "sortPoints": "Очки",
+    "sortGoals": "Голы",
+    "sortAssists": "Ассисты",
+    "sortPrice": "Цена",
+    "dash": "—"
+  },
+  "auth": {
+    "title": "AZPL Fantasy",
+    "subtitle": "Azerbaijan Premier League Fantasy Football",
+    "loginTab": "Войти",
+    "registerTab": "Регистрация",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "username": "Имя пользователя",
+    "usernamePlaceholder": "fantasy_master",
+    "password": "Пароль",
+    "loading": "Загрузка...",
+    "submitLogin": "Войти",
+    "submitRegister": "Создать аккаунт",
+    "genericError": "Ошибка. Попробуйте ещё раз."
+  },
+  "players": {
+    "title": "Игроки",
+    "subtitle": "Сезон {{season}} · Азербайджанская Премьер-лига · {{count}} игроков",
+    "positions": {
+      "all": "Все",
+      "G": "ВРТ",
+      "D": "ЗАЩ",
+      "M": "ПЗН",
+      "F": "НАП"
+    },
+    "columns": {
+      "rank": "#",
+      "player": "Игрок",
+      "position": "Поз.",
+      "club": "Клуб",
+      "matches": "М",
+      "matchesTitle": "Матчи",
+      "goals": "Г",
+      "goalsTitle": "Голы",
+      "assists": "А",
+      "assistsTitle": "Ассисты",
+      "points": "Очки",
+      "price": "Цена"
+    },
+    "empty": "Игроки не найдены"
+  },
+  "leaderboard": {
+    "title": "Турнирная таблица",
+    "empty": "Пока никто не создал команду",
+    "emptyHint": "Зарегистрируйтесь и создайте первую!",
+    "columns": {
+      "rank": "#",
+      "team": "Команда",
+      "manager": "Менеджер",
+      "points": "Очки"
+    }
+  },
+  "myTeam": {
+    "nameStep": {
+      "heading": "Создайте фентези-команду",
+      "subtitle": "Сезон 2025/26 · Азербайджанская Премьер-лига",
+      "teamNameLabel": "Название команды",
+      "teamNamePlaceholder": "Например: Баку Юнайтед",
+      "formationLabel": "Схема игры",
+      "rules": {
+        "clubLimit": "Максимум 3 игрока из одного клуба",
+        "captainDouble": "Очки капитана удваиваются",
+        "vcDouble": "Если капитан не сыграл — удваиваются очки вице-капитана",
+        "budget": "Бюджет £100m · 2 ВРТ + 5 ЗАЩ + 5 ПЗН + 3 НАП"
+      },
+      "nextBtn": "Собрать состав →"
+    },
+    "defaultTeamName": "Моя команда",
+    "round": "Тур {{number}}",
+    "editingSuffix": " · Редактирование состава",
+    "editBtn": "✏️ Редактировать состав",
+    "stats": {
+      "totalPoints": "Всего очков",
+      "season": "Сезон {{name}}",
+      "rank": "Место в лиге",
+      "amongTeams": "среди всех команд",
+      "lastRound": "За последний тур",
+      "formation": "Схема",
+      "playersCount_one": "{{count}} игрок",
+      "playersCount_few": "{{count}} игрока",
+      "playersCount_many": "{{count}} игроков",
+      "playersCount_other": "{{count}} игроков"
+    },
+    "bench": {
+      "title": "Скамейка запасных",
+      "count_one": "{{count}} игрок",
+      "count_few": "{{count}} игрока",
+      "count_many": "{{count}} игроков",
+      "count_other": "{{count}} игроков",
+      "autoFormed": "Формируется автоматически по схеме",
+      "inactiveTitle": "Больше не в составах лиги — не принесёт очков",
+      "inactiveTag": "⚠ не в лиге",
+      "captainTitle": "Капитан (×2)",
+      "vcTitle": "Вице-кап. (×2 если кап не играл)",
+      "removeAction": "Убрать"
+    },
+    "budgetBox": {
+      "transfers": "Трансферы",
+      "budget": "Бюджет",
+      "players": "Игроки"
+    },
+    "formationLabel": "Схема:",
+    "save": {
+      "saving": "Сохраняем...",
+      "saveChanges": "Сохранить изменения",
+      "saveTeam": "Сохранить команду",
+      "cancel": "Отмена",
+      "needMore_one": "Нужен ещё {{count}} игрок",
+      "needMore_few": "Нужно ещё {{count}} игрока",
+      "needMore_many": "Нужно ещё {{count}} игроков",
+      "needMore_other": "Нужно ещё {{count}} игроков",
+      "transferLimitExceeded": "Превышен лимит трансферов ({{max}} за тур)",
+      "genericError": "Ошибка сохранения"
+    },
+    "picker": {
+      "addPlayer": "Добавить игрока"
+    },
+    "playerCard": {
+      "points": "pts"
+    },
+    "blockReasons": {
+      "alreadyAdded": "уже выбран",
+      "positionLimit": "лимит позиции",
+      "notEnoughBudget": "недостаточно бюджета",
+      "squadFull": "состав укомплектован",
+      "clubLimit": "максимум 3 из клуба",
+      "transferLimit": "лимит трансферов (3/тур)"
+    }
+  }
+}

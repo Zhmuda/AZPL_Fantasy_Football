@@ -1,0 +1,30 @@
+# Secrets — never commit real values, .env.example stays as the template
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node / frontend
+node_modules/
+dist/
+frontend/dist/
+
+# Celery
+celerybeat-schedule*
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local session settings
+.claude/settings.local.json

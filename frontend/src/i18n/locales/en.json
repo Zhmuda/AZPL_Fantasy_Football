@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "brand": "AZPL Fantasy",
+    "players": "Players",
+    "myTeam": "My Team",
+    "leaderboard": "Leaderboard",
+    "logout": "Log out",
+    "login": "Log in"
+  },
+  "common": {
+    "loading": "Loading...",
+    "allClubs": "All clubs",
+    "searchByName": "Search by name...",
+    "anyPrice": "Any price",
+    "upTo": "up to £{{price}}m",
+    "sortPoints": "Points",
+    "sortGoals": "Goals",
+    "sortAssists": "Assists",
+    "sortPrice": "Price",
+    "dash": "—"
+  },
+  "auth": {
+    "title": "AZPL Fantasy",
+    "subtitle": "Azerbaijan Premier League Fantasy Football",
+    "loginTab": "Log in",
+    "registerTab": "Sign up",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "username": "Username",
+    "usernamePlaceholder": "fantasy_master",
+    "password": "Password",
+    "loading": "Loading...",
+    "submitLogin": "Log in",
+    "submitRegister": "Create account",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "players": {
+    "title": "Players",
+    "subtitle": "Season {{season}} · Azerbaijan Premier League · {{count}} players",
+    "positions": {
+      "all": "All",
+      "G": "GK",
+      "D": "DEF",
+      "M": "MID",
+      "F": "FWD"
+    },
+    "columns": {
+      "rank": "#",
+      "player": "Player",
+      "position": "Pos.",
+      "club": "Club",
+      "matches": "M",
+      "matchesTitle": "Matches",
+      "goals": "G",
+      "goalsTitle": "Goals",
+      "assists": "A",
+      "assistsTitle": "Assists",
+      "points": "Points",
+      "price": "Price"
+    },
+    "empty": "No players found"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "empty": "No one has created a team yet",
+    "emptyHint": "Sign up and create the first one!",
+    "columns": {
+      "rank": "#",
+      "team": "Team",
+      "manager": "Manager",
+      "points": "Points"
+    }
+  },
+  "myTeam": {
+    "nameStep": {
+      "heading": "Create your fantasy team",
+      "subtitle": "Season 2025/26 · Azerbaijan Premier League",
+      "teamNameLabel": "Team name",
+      "teamNamePlaceholder": "e.g. Baku United",
+      "formationLabel": "Formation",
+      "rules": {
+        "clubLimit": "Max 3 players from one club",
+        "captainDouble": "Captain's points are doubled",
+        "vcDouble": "If the captain didn't play — the vice-captain's points are doubled instead",
+        "budget": "£100m budget · 2 GK + 5 DEF + 5 MID + 3 FWD"
+      },
+      "nextBtn": "Build squad →"
+    },
+    "defaultTeamName": "My Team",
+    "round": "Round {{number}}",
+    "editingSuffix": " · Editing squad",
+    "editBtn": "✏️ Edit squad",
+    "stats": {
+      "totalPoints": "Total points",
+      "season": "Season {{name}}",
+      "rank": "League rank",
+      "amongTeams": "among all teams",
+      "lastRound": "Last round",
+      "formation": "Formation",
+      "playersCount_one": "{{count}} player",
+      "playersCount_other": "{{count}} players"
+    },
+    "bench": {
+      "title": "Bench",
+      "count_one": "{{count}} player",
+      "count_other": "{{count}} players",
+      "autoFormed": "Formed automatically based on formation",
+      "inactiveTitle": "No longer in any league squad — won't score points",
+      "inactiveTag": "⚠ not in league",
+      "captainTitle": "Captain (×2)",
+      "vcTitle": "Vice-captain (×2 if captain didn't play)",
+      "removeAction": "Remove"
+    },
+    "budgetBox": {
+      "transfers": "Transfers",
+      "budget": "Budget",
+      "players": "Players"
+    },
+    "formationLabel": "Formation:",
+    "save": {
+      "saving": "Saving...",
+      "saveChanges": "Save changes",
+      "saveTeam": "Save team",
+      "cancel": "Cancel",
+      "needMore_one": "{{count}} more player needed",
+      "needMore_other": "{{count}} more players needed",
+      "transferLimitExceeded": "Transfer limit exceeded ({{max}} per round)",
+      "genericError": "Failed to save"
+    },
+    "picker": {
+      "addPlayer": "Add player"
+    },
+    "playerCard": {
+      "points": "pts"
+    },
+    "blockReasons": {
+      "alreadyAdded": "already added",
+      "positionLimit": "position limit reached",
+      "notEnoughBudget": "not enough budget",
+      "squadFull": "squad is full",
+      "clubLimit": "max 3 from one club",
+      "transferLimit": "transfer limit (3/round)"
+    }
+  }
+}

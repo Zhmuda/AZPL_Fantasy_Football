@@ -1,0 +1,80 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 0%, #1f2a3c 0%, var(--bg) 70%);
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.header { text-align: center; margin-bottom: 28px; }
+.emoji  { font-size: 36px; display: block; margin-bottom: 8px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.header p  { color: var(--muted); font-size: 13px; }
+
+.tabs {
+  display: flex;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: 24px;
+}
+
+.tab, .activeTab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all .15s;
+}
+.tab       { background: transparent; color: var(--muted); }
+.tab:hover { color: var(--text); }
+.activeTab { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field span { font-size: 13px; font-weight: 500; color: var(--muted); }
+.field input {
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+.field input:focus { border-color: var(--primary); }
+
+.error {
+  padding: 10px 12px;
+  background: rgba(248, 81, 73, .1);
+  border: 1px solid rgba(248, 81, 73, .3);
+  border-radius: 8px;
+  color: var(--red);
+  font-size: 13px;
+}
+
+.submit {
+  padding: 11px;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: 700;
+  font-size: 15px;
+  transition: background .15s, opacity .15s;
+  margin-top: 4px;
+}
+.submit:hover    { background: var(--primary-h); color: #fff; }
+.submit:disabled { opacity: .6; cursor: not-allowed; }

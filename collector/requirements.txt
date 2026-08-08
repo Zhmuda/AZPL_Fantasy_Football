@@ -1,0 +1,6 @@
+celery[redis]==5.4.0
+curl_cffi==0.7.3
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+pydantic-settings==2.6.1
+datafc==2.8.0

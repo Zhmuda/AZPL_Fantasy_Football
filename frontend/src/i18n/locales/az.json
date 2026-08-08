@@ -1,0 +1,142 @@
+{
+  "nav": {
+    "brand": "AZPL Fantasy",
+    "players": "Oyunçular",
+    "myTeam": "Komandam",
+    "leaderboard": "Turnir cədvəli",
+    "logout": "Çıxış",
+    "login": "Daxil ol"
+  },
+  "common": {
+    "loading": "Yüklənir...",
+    "allClubs": "Bütün klublar",
+    "searchByName": "Ada görə axtar...",
+    "anyPrice": "İstənilən qiymət",
+    "upTo": "£{{price}}m-ə qədər",
+    "sortPoints": "Xallar",
+    "sortGoals": "Qollar",
+    "sortAssists": "Asistlər",
+    "sortPrice": "Qiymət",
+    "dash": "—"
+  },
+  "auth": {
+    "title": "AZPL Fantasy",
+    "subtitle": "Azerbaijan Premier League Fantasy Football",
+    "loginTab": "Daxil ol",
+    "registerTab": "Qeydiyyat",
+    "email": "Email",
+    "emailPlaceholder": "siz@example.com",
+    "username": "İstifadəçi adı",
+    "usernamePlaceholder": "fantasy_master",
+    "password": "Şifrə",
+    "loading": "Yüklənir...",
+    "submitLogin": "Daxil ol",
+    "submitRegister": "Hesab yarat",
+    "genericError": "Xəta baş verdi. Yenidən cəhd edin."
+  },
+  "players": {
+    "title": "Oyunçular",
+    "subtitle": "{{season}} mövsümü · Azərbaycan Premyer Liqası · {{count}} oyunçu",
+    "positions": {
+      "all": "Hamısı",
+      "G": "QK",
+      "D": "MÜD",
+      "M": "YMÜD",
+      "F": "HÜC"
+    },
+    "columns": {
+      "rank": "#",
+      "player": "Oyunçu",
+      "position": "Mövqe",
+      "club": "Klub",
+      "matches": "O",
+      "matchesTitle": "Oyunlar",
+      "goals": "Q",
+      "goalsTitle": "Qollar",
+      "assists": "A",
+      "assistsTitle": "Asistlər",
+      "points": "Xallar",
+      "price": "Qiymət"
+    },
+    "empty": "Oyunçu tapılmadı"
+  },
+  "leaderboard": {
+    "title": "Turnir cədvəli",
+    "empty": "Hələ heç kim komanda yaratmayıb",
+    "emptyHint": "Qeydiyyatdan keçin və ilk komandanı yaradın!",
+    "columns": {
+      "rank": "#",
+      "team": "Komanda",
+      "manager": "Menecer",
+      "points": "Xallar"
+    }
+  },
+  "myTeam": {
+    "nameStep": {
+      "heading": "Fantezi komandanızı yaradın",
+      "subtitle": "2025/26 mövsümü · Azərbaycan Premyer Liqası",
+      "teamNameLabel": "Komandanın adı",
+      "teamNamePlaceholder": "Məsələn: Bakı United",
+      "formationLabel": "Oyun sxemi",
+      "rules": {
+        "clubLimit": "Bir klubdan maksimum 3 oyunçu",
+        "captainDouble": "Kapitanın xalları ikiqat hesablanır",
+        "vcDouble": "Kapitan oynamayıbsa — vitse-kapitanın xalları ikiqat hesablanır",
+        "budget": "£100m büdcə · 2 QK + 5 MÜD + 5 YMÜD + 3 HÜC"
+      },
+      "nextBtn": "Tərkibi qur →"
+    },
+    "defaultTeamName": "Komandam",
+    "round": "{{number}}-cü tur",
+    "editingSuffix": " · Tərkib redaktə edilir",
+    "editBtn": "✏️ Tərkibi redaktə et",
+    "stats": {
+      "totalPoints": "Ümumi xal",
+      "season": "{{name}} mövsümü",
+      "rank": "Liqadakı yeri",
+      "amongTeams": "bütün komandalar arasında",
+      "lastRound": "Son tur",
+      "formation": "Sxem",
+      "playersCount_other": "{{count}} oyunçu"
+    },
+    "bench": {
+      "title": "Ehtiyat oyunçular",
+      "count_other": "{{count}} oyunçu",
+      "autoFormed": "Sxemə uyğun avtomatik formalaşır",
+      "inactiveTitle": "Artıq liqa tərkiblərində deyil — xal gətirməyəcək",
+      "inactiveTag": "⚠ liqada deyil",
+      "captainTitle": "Kapitan (×2)",
+      "vcTitle": "Vitse-kapitan (×2, kapitan oynamayıbsa)",
+      "removeAction": "Sil"
+    },
+    "budgetBox": {
+      "transfers": "Transferlər",
+      "budget": "Büdcə",
+      "players": "Oyunçular"
+    },
+    "formationLabel": "Sxem:",
+    "save": {
+      "saving": "Yadda saxlanılır...",
+      "saveChanges": "Dəyişiklikləri yadda saxla",
+      "saveTeam": "Komandanı yadda saxla",
+      "cancel": "Ləğv et",
+      "needMore_other": "Daha {{count}} oyunçu lazımdır",
+      "transferLimitExceeded": "Transfer limiti aşıldı (tur üçün {{max}})",
+      "genericError": "Yadda saxlama xətası"
+    },
+    "picker": {
+      "addPlayer": "Oyunçu əlavə et"
+    },
+    "playerCard": {
+      "points": "xal"
+    },
+    "blockReasons": {
+      "alreadyAdded": "artıq seçilib",
+      "positionLimit": "mövqe limiti",
+      "notEnoughBudget": "büdcə yetərli deyil",
+      "squadFull": "tərkib tamamlanıb",
+      "clubLimit": "bir klubdan maksimum 3",
+      "transferLimit": "transfer limiti (tur üçün 3)"
+    }
+  }
+}

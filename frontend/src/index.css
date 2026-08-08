@@ -1,0 +1,55 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #0d1117;
+  --surface:    #161b22;
+  --surface2:   #21262d;
+  --border:     #30363d;
+  --primary:    #58a6ff;
+  --primary-h:  #1f6feb;
+  --text:       #e6edf3;
+  --muted:      #8b949e;
+  --green:      #3fb950;
+  --red:        #f85149;
+  --yellow:     #e3b341;
+
+  --gk:  #e3b341;
+  --def: #3fb950;
+  --mid: #58a6ff;
+  --fwd: #f85149;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input, select {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.pos-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.pos-G  { background: var(--gk);  color: #000; }
+.pos-D  { background: var(--def); color: #000; }
+.pos-M  { background: var(--mid); color: #000; }
+.pos-F  { background: var(--fwd); color: #fff; }
