@@ -36,7 +36,7 @@ export default function Navbar() {
         <LanguageSwitcher />
         {user ? (
           <>
-            <span className={s.username}>@{user.username}</span>
+            <NavLink to="/settings" className={s.username}>@{user.username}</NavLink>
             <button className={s.btn} onClick={handleLogout}>{t("nav.logout")}</button>
           </>
         ) : (

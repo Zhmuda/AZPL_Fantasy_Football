@@ -7,6 +7,16 @@
     "logout": "Çıxış",
     "login": "Daxil ol"
   },
+  "settings": {
+    "title": "Profil tənzimləmələri",
+    "currentPassword": "Cari şifrə",
+    "newPassword": "Yeni şifrə",
+    "confirmPassword": "Yeni şifrəni təkrarlayın",
+    "save": "Yadda saxla",
+    "success": "Şifrə dəyişdirildi",
+    "tooShort": "Şifrə ən azı 8 simvol olmalıdır",
+    "mismatch": "Şifrələr uyğun gəlmir"
+  },
   "playerDetail": {
     "close": "Bağla",
     "recentMatches": "Son oyunlar",

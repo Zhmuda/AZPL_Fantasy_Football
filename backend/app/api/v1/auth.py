@@ -6,7 +6,7 @@ from app.core.limiter import limiter
 from app.db.session import get_db
 from app.models.user import User
 from app.core.security import hash_password, verify_password, create_access_token, get_current_user
-from app.schemas.user import UserRegister, UserLogin, UserOut, Token
+from app.schemas.user import UserRegister, UserLogin, UserOut, Token, PasswordChange
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -44,3 +44,17 @@ async def login(request: Request, body: UserLogin, db: AsyncSession = Depends(ge
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
     return user
+
+
+@router.put("/me/password", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("5/hour")
+async def change_password(
+    request: Request,
+    body: PasswordChange,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if not verify_password(body.current_password, user.password_hash):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Текущий пароль неверен")
+    user.password_hash = hash_password(body.new_password)
+    await db.commit()

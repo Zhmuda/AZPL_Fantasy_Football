@@ -1,6 +1,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* Tells the browser to render native widgets (select dropdown popups,
+     scrollbars, etc.) with dark-appropriate default colors — without this,
+     the <select> popup list renders on a light background regardless of our
+     own CSS, making light-on-dark text (e.g. muted gray) unreadable in it. */
+  color-scheme: dark;
+
   --bg:         #0d1117;
   --surface:    #161b22;
   --surface2:   #21262d;

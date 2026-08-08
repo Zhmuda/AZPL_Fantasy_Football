@@ -7,6 +7,16 @@
     "logout": "Log out",
     "login": "Log in"
   },
+  "settings": {
+    "title": "Profile settings",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "save": "Save",
+    "success": "Password changed",
+    "tooShort": "Password must be at least 8 characters",
+    "mismatch": "Passwords don't match"
+  },
   "playerDetail": {
     "close": "Close",
     "recentMatches": "Recent matches",

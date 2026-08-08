@@ -34,8 +34,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const changePassword = (currentPassword, newPassword) =>
+    api.put("/auth/me/password", {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, changePassword }}>
       {children}
     </AuthContext.Provider>
   );

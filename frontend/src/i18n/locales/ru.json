@@ -7,6 +7,16 @@
     "logout": "Выйти",
     "login": "Войти"
   },
+  "settings": {
+    "title": "Настройки профиля",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Повторите новый пароль",
+    "save": "Сохранить",
+    "success": "Пароль изменён",
+    "tooShort": "Пароль должен быть не короче 8 символов",
+    "mismatch": "Пароли не совпадают"
+  },
   "playerDetail": {
     "close": "Закрыть",
     "recentMatches": "Последние матчи",

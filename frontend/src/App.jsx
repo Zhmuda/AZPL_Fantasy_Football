@@ -5,6 +5,7 @@ import AuthPage from "./pages/Auth/AuthPage";
 import PlayersPage from "./pages/Players/PlayersPage";
 import MyTeamPage from "./pages/MyTeam/MyTeamPage";
 import LeaderboardPage from "./pages/Leaderboard/LeaderboardPage";
+import SettingsPage from "./pages/Settings/SettingsPage";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ function Layout() {
         <Route path="/players"     element={<PlayersPage />} />
         <Route path="/my-team"     element={<MyTeamPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/settings"    element={<SettingsPage />} />
       </Routes>
     </>
   );

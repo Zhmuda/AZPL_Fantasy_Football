@@ -28,7 +28,8 @@
 .links a.active { color: var(--text); background: var(--surface2); }
 
 .right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
-.username { color: var(--muted); font-size: 13px; }
+.username { color: var(--muted); font-size: 13px; transition: color .15s; }
+.username:hover { color: var(--text); }
 
 .langSelect {
   padding: 5px 8px;
