@@ -25,7 +25,9 @@ services:
 
   backend:
     build: ./backend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
+    # 1 worker, not 2 — this box has ~875MB total RAM shared with other
+    # projects; each extra uvicorn worker is a full separate Python process.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1
     env_file: .env
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
@@ -42,7 +44,12 @@ services:
 
   collector:
     build: ./collector
-    command: celery -A celery_app worker --loglevel=warning -Q default --concurrency=2
+    # --pool=solo: no prefork children — with --concurrency=2 each concurrency
+    # slot was a full forked Python process re-importing pandas/numpy (via
+    # datafc), ~90MB apiece. This worker is I/O-bound (waiting on SofaScore
+    # HTTP calls), not CPU-bound, so it doesn't need real parallelism —
+    # solo runs everything in one process instead.
+    command: celery -A celery_app worker --loglevel=warning -Q default --pool=solo
     env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
