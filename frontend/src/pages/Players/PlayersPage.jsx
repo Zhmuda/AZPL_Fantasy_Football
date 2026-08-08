@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { getPlayers } from "../../api/players";
-import { getTeams } from "../../api/fantasy";
+import { getTeams, getSeasons } from "../../api/fantasy";
 import PlayerDetailModal from "../../components/PlayerDetailModal";
 import s from "./PlayersPage.module.css";
 
@@ -34,8 +34,12 @@ export default function PlayersPage() {
   const [search, setSearch]       = useState("");
   const [sortBy, setSortBy]       = useState("season_points");
   const [detailId, setDetailId]   = useState(null);
+  const [season, setSeason]       = useState(null);
 
   useEffect(() => { getTeams().then(setTeams); }, []);
+  useEffect(() => {
+    getSeasons().then(seasons => setSeason(seasons.find(sn => sn.is_active) ?? seasons[0]));
+  }, []);
 
   // Дебаунс — без него каждый символ в поиске бил по /players отдельным запросом.
   useEffect(() => {
@@ -64,7 +68,7 @@ export default function PlayersPage() {
     <div className={s.page}>
       <div className={s.header}>
         <h1>{t("players.title")}</h1>
-        <p className={s.sub}>{t("players.subtitle", { season: "2025/26", count: sorted.length })}</p>
+        <p className={s.sub}>{t("players.subtitle", { season: season?.name ?? "", count: sorted.length })}</p>
       </div>
 
       <div className={s.filters}>

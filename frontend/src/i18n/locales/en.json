@@ -84,7 +84,7 @@
   "myTeam": {
     "nameStep": {
       "heading": "Create your fantasy team",
-      "subtitle": "Season 2025/26 · Azerbaijan Premier League",
+      "subtitle": "Season {{name}} · Azerbaijan Premier League",
       "teamNameLabel": "Team name",
       "teamNamePlaceholder": "e.g. Baku United",
       "formationLabel": "Formation",

@@ -79,14 +79,14 @@ function StatCard({ label, value, sub, accent }) {
 }
 
 // ─── Шаг 1: создание команды ─────────────────────────────────────────────────
-function NameStep({ name, setName, formation, setFormation, onNext }) {
+function NameStep({ name, setName, formation, setFormation, onNext, season }) {
   const { t } = useTranslation();
   return (
     <div className={s.nameStep}>
       <div className={s.nameCard}>
         <div className={s.nameEmoji}>⚽</div>
         <h2 className={s.nameHeading}>{t("myTeam.nameStep.heading")}</h2>
-        <p className={s.nameSub}>{t("myTeam.nameStep.subtitle")}</p>
+        <p className={s.nameSub}>{t("myTeam.nameStep.subtitle", { name: season?.name ?? "" })}</p>
 
         <div className={s.nameField}>
           <label className={s.nameLabel}>{t("myTeam.nameStep.teamNameLabel")}</label>
@@ -459,6 +459,7 @@ export default function MyTeamPage() {
         name={teamName} setName={setTeamName}
         formation={formation} setFormation={setFormation}
         onNext={() => setStep("build")}
+        season={season}
       />
     );
   }

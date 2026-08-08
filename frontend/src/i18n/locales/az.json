@@ -84,7 +84,7 @@
   "myTeam": {
     "nameStep": {
       "heading": "Fantezi komandanızı yaradın",
-      "subtitle": "2025/26 mövsümü · Azərbaycan Premyer Liqası",
+      "subtitle": "{{name}} mövsümü · Azərbaycan Premyer Liqası",
       "teamNameLabel": "Komandanın adı",
       "teamNamePlaceholder": "Məsələn: Bakı United",
       "formationLabel": "Oyun sxemi",
