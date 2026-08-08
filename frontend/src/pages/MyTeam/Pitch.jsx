@@ -24,6 +24,17 @@ function PlayerToken({ pick, x, y, open, onOpen, onClose, isCaptain, isVC, onCap
       <div
         className={`${s.circle} ${s[`pos${pos}`]} ${inactive ? s.circleInactive : ""}`}
         onClick={e => { e.stopPropagation(); open ? onClose() : onOpen(); }}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault(); e.stopPropagation();
+            open ? onClose() : onOpen();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={pick.player.name}
+        aria-haspopup="menu"
+        aria-expanded={open}
         title={inactive ? t("myTeam.bench.inactiveTitle") : undefined}
       >
         {pos}

@@ -5,3 +5,6 @@ export const getPlayers = (params = {}) =>
 
 export const getPlayer = (id) =>
   api.get(`/players/${id}`).then(r => r.data);
+
+export const getPlayerMatches = (id) =>
+  api.get(`/players/${id}/matches`).then(r => r.data);

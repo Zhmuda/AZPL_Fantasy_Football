@@ -8,6 +8,7 @@ import {
 } from "../../api/fantasy";
 import { getPlayers } from "../../api/players";
 import Pitch from "./Pitch";
+import PlayerDetailModal from "../../components/PlayerDetailModal";
 import s from "./MyTeamPage.module.css";
 
 const FORMATIONS = {
@@ -21,6 +22,15 @@ const BUDGET     = 100;
 const MAX_TRANSFERS = 3;
 
 const PRICE_MAX_OPTIONS = [99, 5, 7, 9, 12];
+
+// round.deadline comes from the API as a naive ISO string (no "Z") but the
+// value is actually UTC — append "Z" so the browser doesn't misread it as
+// local time.
+function formatDeadline(deadline, lang) {
+  if (!deadline) return null;
+  const d = new Date(deadline.endsWith("Z") ? deadline : deadline + "Z");
+  return d.toLocaleString(lang, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+}
 const SORT_OPTIONS = [
   { value: "season_points",  labelKey: "common.sortPoints" },
   { value: "season_goals",   labelKey: "common.sortGoals" },
@@ -48,9 +58,9 @@ function BenchCard({ pick, isCaptain, isVC, onCaptain, onVC, onRemove }) {
       </div>
       {onRemove && (
         <div className={s.benchActions}>
-          <button className={isCaptain ? s.badgeOn : s.badge} onClick={onCaptain} title={t("myTeam.bench.captainTitle")}>C</button>
-          <button className={isVC     ? s.badgeOn : s.badge} onClick={onVC}      title={t("myTeam.bench.vcTitle")}>VC</button>
-          <button className={s.rmSmall} onClick={onRemove}>✕</button>
+          <button className={isCaptain ? s.badgeOn : s.badge} onClick={onCaptain} title={t("myTeam.bench.captainTitle")} aria-label={t("myTeam.bench.captainTitle")}>C</button>
+          <button className={isVC     ? s.badgeOn : s.badge} onClick={onVC}      title={t("myTeam.bench.vcTitle")} aria-label={t("myTeam.bench.vcTitle")}>VC</button>
+          <button className={s.rmSmall} onClick={onRemove} aria-label={t("myTeam.bench.removeAction")}>✕</button>
         </div>
       )}
     </div>
@@ -218,7 +228,7 @@ function ViewStep({ myTeam, savedPicks, allPlayers, season, round, onEdit }) {
 
 // ─── Главный компонент ───────────────────────────────────────────────────────
 export default function MyTeamPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const navigate  = useNavigate();
 
@@ -244,6 +254,7 @@ export default function MyTeamPage() {
   const [pickerMax, setPickerMax]       = useState(99);
   const [pickerSort, setPickerSort]     = useState("season_points");
   const [pickerSearch, setPickerSearch] = useState("");
+  const [detailId, setDetailId] = useState(null);
 
   useEffect(() => {
     if (!user) { navigate("/auth"); return; }
@@ -458,7 +469,16 @@ export default function MyTeamPage() {
         <div className={s.header}>
           <div>
             <h1>{myTeam?.name}</h1>
-            <p className={s.sub}>{season?.name} · {round ? t("myTeam.round", { number: round.number }) : ""}</p>
+            <p className={s.sub}>
+              {season?.name} · {round ? t("myTeam.round", { number: round.number }) : ""}
+              {round?.deadline && (
+                <span style={{ color: new Date(round.deadline + "Z") < new Date() ? "var(--red)" : undefined }}>
+                  {" "}· {new Date(round.deadline + "Z") < new Date()
+                    ? t("myTeam.deadlinePassed")
+                    : t("myTeam.deadline", { date: formatDeadline(round.deadline, i18n.language) })}
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <ViewStep
@@ -483,6 +503,13 @@ export default function MyTeamPage() {
           <p className={s.sub}>
             {season?.name} · {round ? t("myTeam.round", { number: round.number }) : ""}
             {isEditing && t("myTeam.editingSuffix")}
+            {round?.deadline && (
+              <span style={{ color: new Date(round.deadline + "Z") < new Date() ? "var(--red)" : undefined }}>
+                {" "}· {new Date(round.deadline + "Z") < new Date()
+                  ? t("myTeam.deadlinePassed")
+                  : t("myTeam.deadline", { date: formatDeadline(round.deadline, i18n.language) })}
+              </span>
+            )}
           </p>
         </div>
         <div className={s.headerRight}>
@@ -499,6 +526,12 @@ export default function MyTeamPage() {
             <span className={budgetLeft < 0 ? s.budgetOver : s.budgetOk}>
               £{budgetLeft.toFixed(1)}m
             </span>
+            <div className={s.budgetBarTrack}>
+              <div
+                className={`${s.budgetBarFill} ${budgetLeft < 0 ? s.budgetBarFillOver : ""}`}
+                style={{ width: `${Math.min(100, (budgetUsed / BUDGET) * 100)}%` }}
+              />
+            </div>
           </div>
           <div className={s.countBox}>
             <span className={s.budgetLabel}>{t("myTeam.budgetBox.players")}</span>
@@ -619,6 +652,7 @@ export default function MyTeamPage() {
                 <div key={p.id}
                   className={`${s.playerRow} ${added ? s.playerAdded : ""}`}
                   title={why}
+                  onClick={() => setDetailId(p.id)}
                 >
                   <div className={s.pInfo}>
                     {p.photo_url && (
@@ -637,8 +671,9 @@ export default function MyTeamPage() {
                     <div className={s.pPrice}>£{p.price}m</div>
                     <button
                       className={added ? s.addedBtn : ok ? s.addBtn : s.disabledBtn}
-                      onClick={() => !added && addPlayer(p)}
+                      onClick={e => { e.stopPropagation(); !added && addPlayer(p); }}
                       disabled={added || !ok}
+                      aria-label={added ? t("myTeam.picker.addedAria", { name: p.name }) : t("myTeam.picker.addAria", { name: p.name })}
                     >
                       {added ? "✓" : "+"}
                     </button>
@@ -649,6 +684,8 @@ export default function MyTeamPage() {
           </div>
         </div>
       </div>
+
+      <PlayerDetailModal playerId={detailId} onClose={() => setDetailId(null)} />
     </div>
   );
 }

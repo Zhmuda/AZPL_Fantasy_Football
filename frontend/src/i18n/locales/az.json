@@ -7,6 +7,16 @@
     "logout": "Çıxış",
     "login": "Daxil ol"
   },
+  "playerDetail": {
+    "close": "Bağla",
+    "recentMatches": "Son oyunlar",
+    "noMatches": "Hələ oyun keçirilməyib"
+  },
+  "errorBoundary": {
+    "title": "Nəsə səhv getdi",
+    "message": "Səhifədə xəta baş verdi. Səhifəni yeniləməyi cəhd edin — problem təkrarlansa, bizə bildirin.",
+    "reload": "Səhifəni yenilə"
+  },
   "common": {
     "loading": "Yüklənir...",
     "allClubs": "Bütün klublar",
@@ -88,6 +98,8 @@
     },
     "defaultTeamName": "Komandam",
     "round": "{{number}}-cü tur",
+    "deadline": "Son tarix: {{date}}",
+    "deadlinePassed": "Son tarix keçib",
     "editingSuffix": " · Tərkib redaktə edilir",
     "editBtn": "✏️ Tərkibi redaktə et",
     "stats": {
@@ -125,7 +137,9 @@
       "genericError": "Yadda saxlama xətası"
     },
     "picker": {
-      "addPlayer": "Oyunçu əlavə et"
+      "addPlayer": "Oyunçu əlavə et",
+      "addAria": "{{name}} tərkibə əlavə et",
+      "addedAria": "{{name}} artıq tərkibdədir"
     },
     "playerCard": {
       "points": "xal"

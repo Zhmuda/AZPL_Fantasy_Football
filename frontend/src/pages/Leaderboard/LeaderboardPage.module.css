@@ -13,7 +13,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .table { width: 100%; border-collapse: collapse; }
@@ -36,3 +36,7 @@
 .teamName { font-weight: 600; font-size: 15px; }
 .manager  { color: var(--muted); font-size: 13px; }
 .pts { font-weight: 700; font-size: 18px; color: var(--primary); text-align: right; }
+
+@media (max-width: 640px) {
+  .page { padding: 20px 12px; }
+}

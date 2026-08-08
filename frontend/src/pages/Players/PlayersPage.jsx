@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { getPlayers } from "../../api/players";
 import { getTeams } from "../../api/fantasy";
+import PlayerDetailModal from "../../components/PlayerDetailModal";
 import s from "./PlayersPage.module.css";
 
 const POSITIONS = [
@@ -32,6 +33,7 @@ export default function PlayersPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch]       = useState("");
   const [sortBy, setSortBy]       = useState("season_points");
+  const [detailId, setDetailId]   = useState(null);
 
   useEffect(() => { getTeams().then(setTeams); }, []);
 
@@ -119,7 +121,7 @@ export default function PlayersPage() {
             </thead>
             <tbody>
               {sorted.map((p, i) => (
-                <tr key={p.id}>
+                <tr key={p.id} className={s.row} onClick={() => setDetailId(p.id)}>
                   <td className={s.rank}>{i + 1}</td>
                   <td className={s.name}>
                     {p.photo_url && (
@@ -142,6 +144,8 @@ export default function PlayersPage() {
           {sorted.length === 0 && <div className={s.empty}>{t("players.empty")}</div>}
         </div>
       )}
+
+      <PlayerDetailModal playerId={detailId} onClose={() => setDetailId(null)} />
     </div>
   );
 }

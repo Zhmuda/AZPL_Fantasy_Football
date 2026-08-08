@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.db.session import get_db
-from app.models.league import Player, Season
+from app.models.league import Player, Season, Match
 from app.models.stats import PlayerMatchStat
-from app.schemas.league import PlayerOut
+from app.schemas.league import PlayerOut, PlayerMatchHistoryOut
 
 router = APIRouter(prefix="/players", tags=["players"])
 
@@ -78,3 +78,45 @@ async def get_player(player_id: int, db: AsyncSession = Depends(get_db)):
     if not result:
         raise HTTPException(404, "Player not found")
     return result[0]
+
+
+@router.get("/{player_id}/matches", response_model=list[PlayerMatchHistoryOut])
+async def get_player_matches(player_id: int, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    player = await db.get(Player, player_id)
+    if not player:
+        raise HTTPException(404, "Player not found")
+
+    result = await db.execute(
+        select(PlayerMatchStat, Match)
+        .join(Match, PlayerMatchStat.match_id == Match.id)
+        .options(
+            selectinload(Match.home_team),
+            selectinload(Match.away_team),
+            selectinload(Match.round),
+        )
+        .where(PlayerMatchStat.player_id == player_id, Match.status == "finished")
+        .order_by(Match.started_at.desc())
+        .limit(limit)
+    )
+
+    history = []
+    for stat, match in result.all():
+        is_home = match.home_team_id == player.team_id
+        opponent = match.away_team.name if is_home else match.home_team.name
+        history.append(PlayerMatchHistoryOut(
+            match_id=match.id,
+            round_number=match.round.number if match.round else None,
+            opponent=opponent,
+            is_home=is_home,
+            home_score=match.home_score,
+            away_score=match.away_score,
+            started_at=match.started_at,
+            minutes_played=stat.minutes_played,
+            goals=stat.goals,
+            assists=stat.assists,
+            yellow_cards=stat.yellow_cards,
+            red_cards=stat.red_cards,
+            clean_sheet=stat.clean_sheet,
+            fantasy_points=stat.fantasy_points,
+        ))
+    return history

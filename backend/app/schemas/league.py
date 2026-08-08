@@ -51,3 +51,20 @@ class MatchOut(BaseModel):
     status: str
     started_at: datetime | None
     model_config = {"from_attributes": True}
+
+
+class PlayerMatchHistoryOut(BaseModel):
+    match_id: int
+    round_number: int | None
+    opponent: str
+    is_home: bool
+    home_score: int | None
+    away_score: int | None
+    started_at: datetime | None
+    minutes_played: int
+    goals: int
+    assists: int
+    yellow_cards: int
+    red_cards: int
+    clean_sheet: bool
+    fantasy_points: int

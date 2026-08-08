@@ -7,6 +7,16 @@
     "logout": "Log out",
     "login": "Log in"
   },
+  "playerDetail": {
+    "close": "Close",
+    "recentMatches": "Recent matches",
+    "noMatches": "No matches played yet"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "The page ran into an error. Try reloading — if it keeps happening, let us know.",
+    "reload": "Reload page"
+  },
   "common": {
     "loading": "Loading...",
     "allClubs": "All clubs",
@@ -88,6 +98,8 @@
     },
     "defaultTeamName": "My Team",
     "round": "Round {{number}}",
+    "deadline": "Deadline: {{date}}",
+    "deadlinePassed": "Deadline passed",
     "editingSuffix": " · Editing squad",
     "editBtn": "✏️ Edit squad",
     "stats": {
@@ -128,7 +140,9 @@
       "genericError": "Failed to save"
     },
     "picker": {
-      "addPlayer": "Add player"
+      "addPlayer": "Add player",
+      "addAria": "Add {{name}} to squad",
+      "addedAria": "{{name}} is already in your squad"
     },
     "playerCard": {
       "points": "pts"

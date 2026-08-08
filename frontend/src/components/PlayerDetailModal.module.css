@@ -1,0 +1,79 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 16px;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+}
+.closeBtn:hover { color: var(--text); border-color: var(--text); }
+
+.loading { text-align: center; padding: 48px 0; color: var(--muted); }
+
+.header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-right: 30px; }
+.avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+.name { font-size: 18px; font-weight: 700; margin: 0 0 4px; }
+.meta { font-size: 13px; color: var(--muted); }
+
+.inactiveTag { color: var(--red); font-weight: 600; }
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.stat {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 4px;
+  text-align: center;
+}
+.statVal { font-size: 18px; font-weight: 800; color: var(--primary); line-height: 1; }
+.statLabel { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-top: 4px; }
+
+.historyTitle { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 8px; }
+.empty { color: var(--muted); font-size: 13px; padding: 12px 0; text-align: center; }
+
+.historyList { display: flex; flex-direction: column; gap: 2px; }
+.historyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+.historyRow:nth-child(odd) { background: var(--surface2); }
+.historyOpp { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.historyRound { color: var(--muted); font-size: 11px; }
+.historyScore { color: var(--muted); font-variant-numeric: tabular-nums; }
+.historyPts { font-weight: 700; color: var(--primary); white-space: nowrap; }

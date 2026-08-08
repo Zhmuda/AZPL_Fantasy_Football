@@ -180,4 +180,11 @@
 .menu button:hover { background: #2d3340; color: #fff; }
 
 .rmBtn { color: #f87171 !important; }
+
+@media (max-width: 480px) {
+  .pitch { height: 360px; }
+  .circle { width: 38px; height: 38px; font-size: 11px; }
+  .name { font-size: 9px; max-width: 58px; }
+  .pts { font-size: 8px; }
+}
 .rmBtn:hover { background: #2d1f1f !important; }

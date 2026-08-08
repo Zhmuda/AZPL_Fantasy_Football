@@ -149,6 +149,22 @@
 .budgetOk   { font-size: 20px; font-weight: 700; color: var(--green); }
 .budgetOver { font-size: 20px; font-weight: 700; color: var(--red); }
 
+.budgetBarTrack {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin-top: 6px;
+  overflow: hidden;
+}
+.budgetBarFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--green);
+  transition: width .2s ease, background .2s ease;
+}
+.budgetBarFillOver { background: var(--red); }
+
 /* Formation selector */
 .formationBar {
   display: flex;
@@ -391,6 +407,7 @@
   align-items: center;
   gap: 8px;
   padding: 9px 12px;
+  cursor: pointer;
   border-bottom: 1px solid var(--border);
   transition: background .1s;
 }
@@ -421,3 +438,25 @@
 .addBtn:hover { opacity: .8; }
 .addedBtn    { background: var(--green); color: #000; cursor: default; font-size: 13px; }
 .disabledBtn { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+
+/* ── Mobile ── */
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .pickerSide {
+    position: static;
+    max-height: none;
+  }
+  .playerList { max-height: 420px; }
+}
+
+@media (max-width: 480px) {
+  .page { padding: 16px 12px; }
+  .nameCard { padding: 28px 20px; }
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+  .header { flex-direction: column; }
+  .headerRight { width: 100%; }
+  .budgetBox, .countBox { flex: 1; min-width: 0; }
+  .filterRow { flex-wrap: wrap; }
+  .sel { flex: 1 1 45%; }
+  .search { margin-top: 0; }
+}

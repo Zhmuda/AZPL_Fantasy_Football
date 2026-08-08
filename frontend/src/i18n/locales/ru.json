@@ -7,6 +7,16 @@
     "logout": "Выйти",
     "login": "Войти"
   },
+  "playerDetail": {
+    "close": "Закрыть",
+    "recentMatches": "Последние матчи",
+    "noMatches": "Матчей пока не сыграно"
+  },
+  "errorBoundary": {
+    "title": "Что-то пошло не так",
+    "message": "Страница столкнулась с ошибкой. Попробуйте обновить страницу — если проблема повторится, дайте нам знать.",
+    "reload": "Обновить страницу"
+  },
   "common": {
     "loading": "Загрузка...",
     "allClubs": "Все клубы",
@@ -88,6 +98,8 @@
     },
     "defaultTeamName": "Моя команда",
     "round": "Тур {{number}}",
+    "deadline": "Дедлайн: {{date}}",
+    "deadlinePassed": "Дедлайн прошёл",
     "editingSuffix": " · Редактирование состава",
     "editBtn": "✏️ Редактировать состав",
     "stats": {
@@ -134,7 +146,9 @@
       "genericError": "Ошибка сохранения"
     },
     "picker": {
-      "addPlayer": "Добавить игрока"
+      "addPlayer": "Добавить игрока",
+      "addAria": "Добавить {{name}} в состав",
+      "addedAria": "{{name}} уже в составе"
     },
     "playerCard": {
       "points": "pts"

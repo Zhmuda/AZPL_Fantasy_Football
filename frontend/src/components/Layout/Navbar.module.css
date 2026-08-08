@@ -62,3 +62,16 @@
   transition: background .15s;
 }
 .btnPrimary:hover { background: var(--primary-h); color: #fff; }
+
+@media (max-width: 640px) {
+  .nav {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+  .links { gap: 2px; order: 3; width: 100%; }
+  .links a { padding: 5px 10px; font-size: 13px; }
+  .username { display: none; }
+  .right { gap: 8px; }
+}
