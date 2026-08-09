@@ -13,7 +13,7 @@ const xPositions = (n) => {
   return [];
 };
 
-function PlayerToken({ pick, x, y, open, onOpen, onClose, isCaptain, isVC, onCaptain, onVC, onRemove }) {
+function PlayerToken({ pick, x, y, open, onOpen, onClose, isCaptain, isVC, onCaptain, onVC, onRemove, onSwapClick, armed }) {
   const { t } = useTranslation();
   const lastName = pick.player.name.split(" ").slice(-1)[0];
   const pos = pick.player.position;
@@ -22,7 +22,7 @@ function PlayerToken({ pick, x, y, open, onOpen, onClose, isCaptain, isVC, onCap
   return (
     <div className={s.token} style={{ left: `${x}%`, top: `${y}%` }}>
       <div
-        className={`${s.circle} ${s[`pos${pos}`]} ${inactive ? s.circleInactive : ""}`}
+        className={`${s.circle} ${s[`pos${pos}`]} ${inactive ? s.circleInactive : ""} ${armed ? s.circleArmed : ""}`}
         onClick={e => { e.stopPropagation(); open ? onClose() : onOpen(); }}
         onKeyDown={e => {
           if (e.key === "Enter" || e.key === " ") {
@@ -41,22 +41,31 @@ function PlayerToken({ pick, x, y, open, onOpen, onClose, isCaptain, isVC, onCap
         {isCaptain && <span className={s.capBadge}>C</span>}
         {isVC && !isCaptain && <span className={s.vcBadge}>V</span>}
         {inactive && <span className={s.warnBadge}>!</span>}
+        {onSwapClick && (
+          <span
+            className={`${s.swapBadge} ${armed ? s.swapBadgeArmed : ""}`}
+            onClick={e => { e.stopPropagation(); onSwapClick(); }}
+            title={t("myTeam.bench.demoteTitle")}
+            aria-label={t("myTeam.bench.demoteTitle")}
+            role="button"
+          >⇄</span>
+        )}
       </div>
       <div className={s.name}>{lastName}</div>
       <div className={s.pts}>{pick.player.season_points}{t("myTeam.playerCard.points")}</div>
 
-      {open && (
+      {open && (onCaptain || onVC || onRemove) && (
         <div className={s.menu} onClick={e => e.stopPropagation()}>
-          <button onClick={onCaptain}>👑 {t("myTeam.bench.captainTitle")}</button>
-          <button onClick={onVC}>⭐ {t("myTeam.bench.vcTitle")}</button>
-          <button className={s.rmBtn} onClick={onRemove}>✕ {t("myTeam.bench.removeAction")}</button>
+          {onCaptain && <button onClick={onCaptain}>👑 {t("myTeam.bench.captainTitle")}</button>}
+          {onVC && <button onClick={onVC}>⭐ {t("myTeam.bench.vcTitle")}</button>}
+          {onRemove && <button className={s.rmBtn} onClick={onRemove}>✕ {t("myTeam.bench.removeAction")}</button>}
         </div>
       )}
     </div>
   );
 }
 
-export default function Pitch({ starters, captainId, viceCaptainId, onCaptain, onVC, onRemove }) {
+export default function Pitch({ starters, captainId, viceCaptainId, onCaptain, onVC, onRemove, onSwapClick, armedId }) {
   const [openId, setOpenId] = useState(null);
 
   return (
@@ -81,9 +90,11 @@ export default function Pitch({ starters, captainId, viceCaptainId, onCaptain, o
             onClose={() => setOpenId(null)}
             isCaptain={captainId === pick.player.id}
             isVC={viceCaptainId === pick.player.id}
-            onCaptain={() => { onCaptain(pick.player.id); setOpenId(null); }}
-            onVC={() => { onVC(pick.player.id); setOpenId(null); }}
-            onRemove={() => { onRemove(pick.player.id); setOpenId(null); }}
+            onCaptain={onCaptain ? () => { onCaptain(pick.player.id); setOpenId(null); } : undefined}
+            onVC={onVC ? () => { onVC(pick.player.id); setOpenId(null); } : undefined}
+            onRemove={onRemove ? () => { onRemove(pick.player.id); setOpenId(null); } : undefined}
+            onSwapClick={onSwapClick ? () => onSwapClick(pick.player.id) : undefined}
+            armed={armedId === pick.player.id}
           />
         ));
       })}

@@ -10,6 +10,7 @@ from app.models.user import User
 from app.models.league import Season, Round, Team, Player, Match
 from app.models.stats import PlayerMatchStat, MatchEvent
 from app.models.fantasy import FantasyTeam, FantasyPick, FantasyRoundScore
+from app.models.private_league import MiniLeague, MiniLeagueMember
 from app.models.settings import SystemSetting
 from app.models.synclog import SyncLog
 
@@ -152,6 +153,33 @@ class FantasyRoundScoreAdmin(ModelView, model=FantasyRoundScore):
     name = "Очки за тур"
     name_plural = "Очки за туры"
     icon = "fa-solid fa-chart-line"
+
+
+class MiniLeagueAdmin(ModelView, model=MiniLeague):
+    column_list = [MiniLeague.id, MiniLeague.name, MiniLeague.code,
+                   MiniLeague.season_id, MiniLeague.owner_user_id, MiniLeague.created_at]
+    column_labels = {
+        MiniLeague.name: "Название", MiniLeague.code: "Код приглашения",
+        MiniLeague.season_id: "Сезон", MiniLeague.owner_user_id: "Создатель",
+        MiniLeague.created_at: "Создана",
+    }
+    column_searchable_list = [MiniLeague.name, MiniLeague.code]
+    name = "Мини-лига"
+    name_plural = "Мини-лиги"
+    icon = "fa-solid fa-user-group"
+
+
+class MiniLeagueMemberAdmin(ModelView, model=MiniLeagueMember):
+    column_list = [MiniLeagueMember.id, MiniLeagueMember.league_id,
+                   MiniLeagueMember.user_id, MiniLeagueMember.joined_at]
+    column_labels = {
+        MiniLeagueMember.league_id: "Лига", MiniLeagueMember.user_id: "Пользователь",
+        MiniLeagueMember.joined_at: "Вступил",
+    }
+    column_filters = [MiniLeagueMember.league_id]
+    name = "Участник мини-лиги"
+    name_plural = "Участники мини-лиг"
+    icon = "fa-solid fa-user-plus"
 
 
 class MatchEventAdmin(ModelView, model=MatchEvent):

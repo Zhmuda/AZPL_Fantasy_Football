@@ -51,3 +51,10 @@ def get_event_lineups(event_id: int) -> dict:
 def get_team_players(team_id: int) -> list[dict]:
     data = _get(f"/team/{team_id}/players")
     return data.get("players", [])
+
+
+def get_standings(tournament_id: int, season_id: int) -> list[dict]:
+    """Final/current league table — [{"team_id": int, "rank": int}, ...]."""
+    data = _get(f"/unique-tournament/{tournament_id}/season/{season_id}/standings/total")
+    rows = (data.get("standings") or [{}])[0].get("rows", [])
+    return [{"team_id": r["team"]["id"], "rank": r["position"]} for r in rows]

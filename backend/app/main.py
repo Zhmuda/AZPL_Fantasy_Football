@@ -11,12 +11,12 @@ from starlette.requests import Request
 from app.core.config import settings
 from app.core.limiter import limiter
 from app.db.session import engine
-from app.api.v1 import auth, players, matches, fantasy
+from app.api.v1 import auth, players, matches, fantasy, leagues
 from app.admin.views import (
     UserAdmin, SeasonAdmin, RoundAdmin, TeamAdmin,
     PlayerAdmin, MatchAdmin, PlayerMatchStatAdmin, FantasyTeamAdmin,
     FantasyPickAdmin, FantasyRoundScoreAdmin, MatchEventAdmin,
-    SystemSettingAdmin, SyncLogAdmin,
+    SystemSettingAdmin, SyncLogAdmin, MiniLeagueAdmin, MiniLeagueMemberAdmin,
 )
 
 ADMIN_SESSION_MAX_AGE = 60 * 60 * 24 * 90  # 90 days
@@ -79,12 +79,15 @@ admin.add_view(FantasyPickAdmin)
 admin.add_view(FantasyRoundScoreAdmin)
 admin.add_view(SystemSettingAdmin)
 admin.add_view(SyncLogAdmin)
+admin.add_view(MiniLeagueAdmin)
+admin.add_view(MiniLeagueMemberAdmin)
 
 # API routes
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(players.router, prefix="/api/v1")
 app.include_router(matches.router, prefix="/api/v1")
 app.include_router(fantasy.router, prefix="/api/v1")
+app.include_router(leagues.router, prefix="/api/v1")
 
 
 @app.get("/api/health")

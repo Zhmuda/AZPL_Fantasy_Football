@@ -116,6 +116,10 @@ async def get_player_matches(player_id: int, limit: int = 10, db: AsyncSession =
             assists=stat.assists,
             yellow_cards=stat.yellow_cards,
             red_cards=stat.red_cards,
+            own_goals=stat.own_goals,
+            saves=stat.saves,
+            penalty_save=stat.penalty_save,
+            penalty_miss=stat.penalty_miss,
             clean_sheet=stat.clean_sheet,
             fantasy_points=stat.fantasy_points,
         ))

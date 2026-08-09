@@ -58,3 +58,12 @@ def get_team_players(team_id: int) -> list[dict]:
     with SofascoreClient(rate_limit=_rate_limit()) as client:
         data = client.get(f"{API_URLS['sofascore']}/api/v1/team/{team_id}/players")
     return data.get("players", [])
+
+
+def get_standings(tournament_id: int, season_id: int) -> list[dict]:
+    with SofascoreClient(rate_limit=_rate_limit()) as client:
+        data = client.get(
+            f"{API_URLS['sofascore']}/api/v1/unique-tournament/{tournament_id}/season/{season_id}/standings/total"
+        )
+    rows = (data.get("standings") or [{}])[0].get("rows", [])
+    return [{"team_id": r["team"]["id"], "rank": r["position"]} for r in rows]

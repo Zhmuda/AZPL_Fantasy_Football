@@ -30,6 +30,14 @@ export default function Navbar() {
         <NavLink to="/leaderboard" className={({ isActive }) => isActive ? s.active : ""}>
           {t("nav.leaderboard")}
         </NavLink>
+        {user && (
+          <NavLink to="/leagues" className={({ isActive }) => isActive ? s.active : ""}>
+            {t("nav.leagues")}
+          </NavLink>
+        )}
+        <NavLink to="/rules" className={({ isActive }) => isActive ? s.active : ""}>
+          {t("nav.rules")}
+        </NavLink>
       </div>
 
       <div className={s.right}>

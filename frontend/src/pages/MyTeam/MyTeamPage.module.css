@@ -70,7 +70,7 @@
 /* ── View step ── */
 .viewStep { display: flex; flex-direction: column; gap: 16px; }
 
-.editBar { display: flex; justify-content: flex-end; }
+.editBar { display: flex; justify-content: flex-end; margin-bottom: 18px; }
 .editBtn {
   padding: 9px 18px;
   background: var(--surface);
@@ -88,6 +88,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
+  margin-bottom: 18px;
 }
 .statCard {
   background: var(--surface);
@@ -169,9 +170,12 @@
 .formationBar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 18px;
 }
+.formationGroup { display: flex; align-items: center; gap: 8px; }
 .formationLabel { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .fmtnBtn, .fmtnActive {
   padding: 6px 16px;
@@ -195,6 +199,27 @@
 
 /* Left column */
 .pitchSide { display: flex; flex-direction: column; gap: 14px; }
+
+/* Pitch + bench side by side instead of stacked — the pitch itself is much
+   narrower than this row, so the freed-up width goes to the bench, and the
+   whole build/edit view fits without scrolling to see who's on the bench. */
+.swapHint {
+  font-size: 12px;
+  color: var(--primary);
+  background: rgba(88, 166, 255, .1);
+  border: 1px solid rgba(88, 166, 255, .3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}
+
+.pitchRow { display: flex; gap: 14px; align-items: flex-start; }
+.pitchRow .benchSection { flex: 1; min-width: 0; align-self: stretch; display: flex; flex-direction: column; }
+.pitchRow .benchList { flex: 1; overflow-y: auto; }
+
+@media (max-width: 860px) {
+  .pitchRow { flex-direction: column; }
+}
 
 .nameInput {
   width: 100%;
@@ -238,6 +263,7 @@
   border-bottom: 1px solid var(--border);
 }
 .benchCard:last-child { border-bottom: none; }
+.benchCardArmed { background: rgba(88, 166, 255, .1); }
 
 .benchCircle {
   width: 36px;

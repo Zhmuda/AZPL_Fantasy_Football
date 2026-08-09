@@ -66,5 +66,9 @@ class PlayerMatchHistoryOut(BaseModel):
     assists: int
     yellow_cards: int
     red_cards: int
+    own_goals: int
+    saves: int
+    penalty_save: int
+    penalty_miss: int
     clean_sheet: bool
     fantasy_points: int

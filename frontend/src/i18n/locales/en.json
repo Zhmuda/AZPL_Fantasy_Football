@@ -4,8 +4,17 @@
     "players": "Players",
     "myTeam": "My Team",
     "leaderboard": "Leaderboard",
+    "rules": "Rules",
+    "leagues": "Leagues",
     "logout": "Log out",
     "login": "Log in"
+  },
+  "footer": {
+    "support": "Support",
+    "vk": "VKontakte",
+    "telegram": "Telegram",
+    "comingSoon": "Coming soon",
+    "copy": "© {{year}} AZPL Fantasy · unofficial fan project"
   },
   "settings": {
     "title": "Profile settings",
@@ -20,7 +29,8 @@
   "playerDetail": {
     "close": "Close",
     "recentMatches": "Recent matches",
-    "noMatches": "No matches played yet"
+    "noMatches": "No matches played yet",
+    "noPoints": "No scoring events in this match"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -78,7 +88,12 @@
       "points": "Points",
       "price": "Price"
     },
-    "empty": "No players found"
+    "empty": "No players found",
+    "pagination": {
+      "prev": "← Prev",
+      "next": "Next →",
+      "page": "Page {{current}} of {{total}}"
+    }
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -110,8 +125,9 @@
     "round": "Round {{number}}",
     "deadline": "Deadline: {{date}}",
     "deadlinePassed": "Deadline passed",
-    "editingSuffix": " · Editing squad",
-    "editBtn": "✏️ Edit squad",
+    "transfersSuffix": " · Transfers",
+    "transfersBtn": "🔄 Make transfers",
+    "backBtn": "← Normal mode",
     "stats": {
       "totalPoints": "Total points",
       "season": "Season {{name}}",
@@ -131,6 +147,9 @@
       "inactiveTag": "⚠ not in league",
       "captainTitle": "Captain (×2)",
       "vcTitle": "Vice-captain (×2 if captain didn't play)",
+      "promoteTitle": "Move to starting XI",
+      "demoteTitle": "Move to bench",
+      "swapHint": "Pick a same-position player to swap with — or click ⇄ again to cancel",
       "removeAction": "Remove"
     },
     "budgetBox": {
@@ -164,6 +183,101 @@
       "squadFull": "squad is full",
       "clubLimit": "max 3 from one club",
       "transferLimit": "transfer limit (3/round)"
+    }
+  },
+  "rules": {
+    "title": "Fantasy league rules",
+    "subtitle": "Season {{season}} · Azerbaijan Premier League",
+    "squad": {
+      "heading": "Building your squad",
+      "items": [
+        "15 players: 2 goalkeepers, 5 defenders, 5 midfielders, 3 forwards",
+        "£100m budget for the whole squad",
+        "Max 3 players from one club",
+        "11 players start on the pitch under one of the formations: 4-4-2, 4-3-3 or 5-2-3 — the other 4 stay on the bench"
+      ]
+    },
+    "lineup": {
+      "heading": "Captain, vice-captain and matchday lineup",
+      "items": [
+        "Captain and vice-captain are picked among the starting 11",
+        "The captain's points are doubled if they play at least 1 minute",
+        "If the captain doesn't play at all, the vice-captain's points are doubled instead",
+        "In normal mode (without entering transfers) you can change captain, vice-captain and swap players between the starting XI and the bench at any time before the deadline — this isn't a transfer and has no limit"
+      ]
+    },
+    "transfers": {
+      "heading": "Transfers",
+      "items": [
+        "Up to 3 transfers per round — swapping a squad player for a different one from the full player list",
+        "Round deadline is the kickoff of the round's first match; after the deadline, changes for that round are locked",
+        "Transfers happen separately from normal mode, via the \"Make transfers\" button — that screen only lets you swap players, with no captain or lineup controls"
+      ]
+    },
+    "scoring": {
+      "heading": "How points are scored",
+      "intro": "Points are calculated automatically after every match in the round, based on each player's match stats.",
+      "table": { "action": "Event", "points": "Points" },
+      "rows": {
+        "playedShort": "Played 1–59 minutes",
+        "playedFull": "Played 60+ minutes",
+        "goalGkDef": "Goal by a goalkeeper or defender",
+        "goalMid": "Goal by a midfielder",
+        "goalFwd": "Goal by a forward",
+        "assist": "Assist",
+        "cleanSheetGkDef": "Clean sheet, goalkeeper/defender (60+ minutes)",
+        "cleanSheetMid": "Clean sheet, midfielder (60+ minutes)",
+        "savesPerThree": "Every 3 saves by a goalkeeper",
+        "penaltySave": "Penalty save",
+        "penaltyMiss": "Penalty miss",
+        "yellowCard": "Yellow card",
+        "redCard": "Red card",
+        "ownGoal": "Own goal"
+      },
+      "captainNote": "The captain's total points are doubled (×2). Forwards don't score points for a clean sheet.",
+      "benchNote": "Bench players score no points — there's no auto-substitution. If a player is injured or out of the squad, move them to the starting XI manually ahead of time."
+    },
+    "pricing": {
+      "heading": "How player prices are calculated",
+      "items": [
+        "Price depends on a player's points, goals and assists this season, plus how many matches they've played",
+        "Below 5 matches played this season, part of the price is based on their club's final rank last season — so prices don't collapse to the floor right after a player's first match",
+        "Prices are recalculated automatically after each round's stats are synced",
+        "Unlike some other fantasy games, price doesn't depend on how many managers own the player — only on on-pitch performance"
+      ]
+    }
+  },
+  "leagues": {
+    "title": "My leagues",
+    "subtitle": "Compete with friends, separate from the global leaderboard",
+    "createHeading": "Create a league",
+    "namePlaceholder": "e.g. Office League",
+    "createBtn": "Create",
+    "joinHeading": "Join with a code",
+    "codePlaceholder": "Invite code",
+    "joinBtn": "Join",
+    "empty": "You're not in any league yet",
+    "emptyHint": "Create one or join with a code from a friend",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
+    "owner": "Owner",
+    "code": "Invite code",
+    "copyBtn": "Copy",
+    "copied": "Copied",
+    "backBtn": "← All leagues",
+    "leaveBtn": "Leave league",
+    "leaveConfirm": "Leave \"{{name}}\"?",
+    "noTeamYet": "no team yet",
+    "columns": {
+      "rank": "#",
+      "manager": "Manager",
+      "team": "Team",
+      "points": "Points"
+    },
+    "errors": {
+      "nameRequired": "Enter a league name",
+      "codeRequired": "Enter a code",
+      "generic": "Something went wrong. Please try again."
     }
   }
 }

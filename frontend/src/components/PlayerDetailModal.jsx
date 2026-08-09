@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getPlayer, getPlayerMatches } from "../api/players";
+import { breakdownPoints } from "../utils/scoring";
 import s from "./PlayerDetailModal.module.css";
 
 export default function PlayerDetailModal({ playerId, onClose }) {
@@ -8,11 +9,13 @@ export default function PlayerDetailModal({ playerId, onClose }) {
   const [player, setPlayer] = useState(null);
   const [matches, setMatches] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     if (!playerId) return;
     setPlayer(null);
     setMatches(null);
+    setExpandedId(null);
     setLoading(true);
     Promise.all([getPlayer(playerId), getPlayerMatches(playerId)])
       .then(([p, m]) => { setPlayer(p); setMatches(m); })
@@ -79,18 +82,48 @@ export default function PlayerDetailModal({ playerId, onClose }) {
             )}
             {matches && matches.length > 0 && (
               <div className={s.historyList}>
-                {matches.map(m => (
-                  <div key={m.match_id} className={s.historyRow}>
-                    <div className={s.historyOpp}>
-                      {m.is_home ? "" : "@ "}{m.opponent}
-                      {m.round_number != null && (
-                        <span className={s.historyRound}> · {t("myTeam.round", { number: m.round_number })}</span>
+                {matches.map(m => {
+                  const open = expandedId === m.match_id;
+                  const lines = breakdownPoints(m, player.position);
+                  return (
+                    <div key={m.match_id} className={s.historyItem}>
+                      <button
+                        type="button"
+                        className={s.historyRow}
+                        onClick={() => setExpandedId(open ? null : m.match_id)}
+                        aria-expanded={open}
+                      >
+                        <div className={s.historyOpp}>
+                          {m.is_home ? "" : "@ "}{m.opponent}
+                          {m.round_number != null && (
+                            <span className={s.historyRound}> · {t("myTeam.round", { number: m.round_number })}</span>
+                          )}
+                        </div>
+                        <div className={s.historyScore}>{m.home_score}–{m.away_score}</div>
+                        <div className={s.historyPts}>{m.fantasy_points} {t("myTeam.playerCard.points")}</div>
+                        <span className={s.chevron}>{open ? "▲" : "▼"}</span>
+                      </button>
+                      {open && (
+                        <div className={s.breakdown}>
+                          {lines.length === 0
+                            ? <div className={s.breakdownEmpty}>{t("playerDetail.noPoints")}</div>
+                            : lines.map((l, i) => (
+                              <div key={i} className={s.breakdownLine}>
+                                <span>
+                                  {t(`rules.scoring.rows.${l.key}`)}
+                                  {l.count > 1 ? ` ×${l.count}` : ""}
+                                </span>
+                                <span className={l.total < 0 ? s.negative : s.positive}>
+                                  {l.total > 0 ? `+${l.total}` : l.total}
+                                </span>
+                              </div>
+                            ))
+                          }
+                        </div>
                       )}
                     </div>
-                    <div className={s.historyScore}>{m.home_score}–{m.away_score}</div>
-                    <div className={s.historyPts}>{m.fantasy_points} {t("myTeam.playerCard.points")}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </>

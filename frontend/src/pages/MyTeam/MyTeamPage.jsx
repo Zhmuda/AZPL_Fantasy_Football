@@ -39,12 +39,12 @@ const SORT_OPTIONS = [
 ];
 
 // ─── Bench card ──────────────────────────────────────────────────────────────
-function BenchCard({ pick, isCaptain, isVC, onCaptain, onVC, onRemove }) {
+function BenchCard({ pick, isCaptain, isVC, onCaptain, onVC, onRemove, onSwapClick, armed }) {
   const { t } = useTranslation();
   const pos = pick.player.position;
   const inactive = pick.player.is_active === false;
   return (
-    <div className={s.benchCard}>
+    <div className={`${s.benchCard} ${armed ? s.benchCardArmed : ""}`}>
       <div
         className={`${s.benchCircle} ${s[`pos${pos}`]} ${inactive ? s.benchCircleInactive : ""}`}
         title={inactive ? t("myTeam.bench.inactiveTitle") : undefined}
@@ -56,11 +56,20 @@ function BenchCard({ pick, isCaptain, isVC, onCaptain, onVC, onRemove }) {
         </div>
         <div className={s.benchSub}>{pick.player.team?.name ?? t("common.dash")} · £{pick.player.price}m</div>
       </div>
-      {onRemove && (
+      {(onCaptain || onVC || onRemove || onSwapClick) && (
         <div className={s.benchActions}>
-          <button className={isCaptain ? s.badgeOn : s.badge} onClick={onCaptain} title={t("myTeam.bench.captainTitle")} aria-label={t("myTeam.bench.captainTitle")}>C</button>
-          <button className={isVC     ? s.badgeOn : s.badge} onClick={onVC}      title={t("myTeam.bench.vcTitle")} aria-label={t("myTeam.bench.vcTitle")}>VC</button>
-          <button className={s.rmSmall} onClick={onRemove} aria-label={t("myTeam.bench.removeAction")}>✕</button>
+          {onSwapClick && (
+            <button className={armed ? s.badgeOn : s.badge} onClick={onSwapClick} title={t("myTeam.bench.promoteTitle")} aria-label={t("myTeam.bench.promoteTitle")}>⇄</button>
+          )}
+          {onCaptain && (
+            <button className={isCaptain ? s.badgeOn : s.badge} onClick={onCaptain} title={t("myTeam.bench.captainTitle")} aria-label={t("myTeam.bench.captainTitle")}>C</button>
+          )}
+          {onVC && (
+            <button className={isVC ? s.badgeOn : s.badge} onClick={onVC} title={t("myTeam.bench.vcTitle")} aria-label={t("myTeam.bench.vcTitle")}>VC</button>
+          )}
+          {onRemove && (
+            <button className={s.rmSmall} onClick={onRemove} aria-label={t("myTeam.bench.removeAction")}>✕</button>
+          )}
         </div>
       )}
     </div>
@@ -132,98 +141,28 @@ function NameStep({ name, setName, formation, setFormation, onNext, season }) {
   );
 }
 
-// ─── Шаг 3: просмотр сохранённой команды ────────────────────────────────────
-function ViewStep({ myTeam, savedPicks, allPlayers, season, round, onEdit }) {
-  const { t } = useTranslation();
-  const starters  = { G: [], D: [], M: [], F: [] };
-  const bench     = [];
-
-  const enriched = savedPicks.map(pick => {
-    const full = allPlayers.find(p => p.id === pick.player.id);
+// Восстанавливает локальный черновик (picks + formation) из сохранённого на
+// сервере состава — используется и при первой загрузке, и при отмене
+// несохранённых изменений (в обычном режиме или в режиме трансферов).
+function deriveDraft(saved, players) {
+  const draftPicks = saved.map(pick => {
+    const full = players.find(p => p.id === pick.player.id);
     return {
-      ...pick,
       player: { ...pick.player, season_points: full?.season_points ?? 0 },
+      is_captain: pick.is_captain,
+      is_vice_captain: pick.is_vice_captain,
     };
   });
 
-  for (const pick of enriched) {
-    if (pick.slot <= 11) {
-      const pos = pick.player.position;
-      if (starters[pos]) starters[pos].push(pick);
-    } else {
-      bench.push(pick);
-    }
-  }
-
-  const captainId     = enriched.find(p => p.is_captain)?.player.id     ?? null;
-  const viceCaptainId = enriched.find(p => p.is_vice_captain)?.player.id ?? null;
-
-  // Определяем схему по количеству стартовых игроков
-  const dCount = starters.D.length;
-  const mCount = starters.M.length;
-  const fCount = starters.F.length;
-  const formationLabel = `${dCount}-${mCount}-${fCount}`;
-
-  return (
-    <div className={s.viewStep}>
-      <div className={s.editBar}>
-        <button className={s.editBtn} onClick={onEdit}>{t("myTeam.editBtn")}</button>
-      </div>
-
-      {/* Статистика команды */}
-      <div className={s.statsRow}>
-        <StatCard
-          label={t("myTeam.stats.totalPoints")}
-          value={myTeam.total_points}
-          sub={t("myTeam.stats.season", { name: season?.name ?? "" })}
-          accent
-        />
-        <StatCard
-          label={t("myTeam.stats.rank")}
-          value={myTeam.rank ? `#${myTeam.rank}` : t("common.dash")}
-          sub={t("myTeam.stats.amongTeams")}
-        />
-        <StatCard
-          label={t("myTeam.stats.lastRound")}
-          value={myTeam.last_round_points ?? t("common.dash")}
-          sub={round ? t("myTeam.round", { number: round.number }) : ""}
-        />
-        <StatCard
-          label={t("myTeam.stats.formation")}
-          value={formationLabel}
-          sub={t("myTeam.stats.playersCount", { count: enriched.length })}
-        />
-      </div>
-
-      {/* Поле */}
-      <Pitch
-        starters={starters}
-        captainId={captainId}
-        viceCaptainId={viceCaptainId}
-        onCaptain={() => {}}
-        onVC={() => {}}
-        onRemove={() => {}}
-      />
-
-      {/* Скамейка */}
-      {bench.length > 0 && (
-        <div className={s.benchSection}>
-          <div className={s.benchHeader}>
-            <span className={s.benchTitle}>{t("myTeam.bench.title")}</span>
-            <span className={s.benchSub2}>{t("myTeam.bench.count", { count: bench.length })}</span>
-          </div>
-          <div className={s.benchList}>
-            {bench.map(pick => (
-              <BenchCard key={pick.id} pick={pick}
-                isCaptain={captainId === pick.player.id}
-                isVC={viceCaptainId === pick.player.id}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+  const counts = { D: 0, M: 0, F: 0 };
+  saved.filter(p => p.slot <= 11).forEach(p => {
+    if (counts[p.player.position] !== undefined) counts[p.player.position]++;
+  });
+  const matched = Object.entries(FORMATIONS).find(
+    ([, f]) => f.D === counts.D && f.M === counts.M && f.F === counts.F
   );
+
+  return { picks: draftPicks, formation: matched ? matched[0] : "4-4-2" };
 }
 
 // ─── Главный компонент ───────────────────────────────────────────────────────
@@ -255,6 +194,7 @@ export default function MyTeamPage() {
   const [pickerSort, setPickerSort]     = useState("season_points");
   const [pickerSearch, setPickerSearch] = useState("");
   const [detailId, setDetailId] = useState(null);
+  const [armedId, setArmedId] = useState(null);
 
   useEffect(() => {
     if (!user) { navigate("/auth"); return; }
@@ -282,8 +222,16 @@ export default function MyTeamPage() {
         const p = await getMyPicks(active.id, currentRound.id);
         setSavedPicks(p);
 
-        // Есть picks → view; есть команда без picks → build
-        setStep(p.length > 0 ? "view" : "build");
+        // Есть picks → обычный режим (лайнап уже готов); есть команда без
+        // picks → сборка состава с нуля.
+        if (p.length > 0) {
+          const draft = deriveDraft(p, players);
+          setPicks(draft.picks);
+          setFormation(draft.formation);
+          setStep("view");
+        } else {
+          setStep("build");
+        }
       } catch (err) {
         if (err.response?.status !== 404) {
           console.error("Failed to load team:", err);
@@ -320,6 +268,21 @@ export default function MyTeamPage() {
     ? picks.filter(p => !originalIds.has(p.player.id)).length
     : 0;
 
+  // Есть ли несохранённые изменения — сравниваем черновик (в том порядке,
+  // в котором он был бы отправлен на сервер) с уже сохранённым составом.
+  // Порядок отражает и распределение старт/скамейка, и схему, так что смена
+  // капитана, замена местами или смена схемы без сохранения состава — тоже
+  // изменение.
+  const isDirty = useMemo(() => {
+    const ordered = [...starters.G, ...starters.D, ...starters.M, ...starters.F, ...bench];
+    const current = ordered.map(p => `${p.player.id}:${p.is_captain ? 1 : 0}:${p.is_vice_captain ? 1 : 0}`).join(",");
+    const saved = [...savedPicks]
+      .sort((a, b) => a.slot - b.slot)
+      .map(p => `${p.player.id}:${p.is_captain ? 1 : 0}:${p.is_vice_captain ? 1 : 0}`)
+      .join(",");
+    return current !== saved;
+  }, [starters, bench, savedPicks]);
+
   // ── Валидация добавления ──────────────────────────────────────────────────
   const canAdd = useCallback((player) => {
     if (picks.find(p => p.player.id === player.id)) return false;
@@ -348,8 +311,54 @@ export default function MyTeamPage() {
     setPicks(prev => [...prev, { player, is_captain: false, is_vice_captain: false }]);
   };
 
+  // Removing the captain/VC happens only in transfers mode, which has no
+  // captain/VC controls to fix the gap manually — auto-promote a replacement
+  // so the squad always has exactly one of each (the backend requires it).
   const removePlayer = (playerId) =>
-    setPicks(prev => prev.filter(p => p.player.id !== playerId));
+    setPicks(prev => {
+      const removed = prev.find(p => p.player.id === playerId);
+      let next = prev.filter(p => p.player.id !== playerId);
+      if (removed?.is_captain && next.length > 0) {
+        const vcIdx = next.findIndex(p => p.is_vice_captain);
+        const idx = vcIdx !== -1 ? vcIdx : 0;
+        next = next.map((p, i) => i === idx ? { ...p, is_captain: true, is_vice_captain: false } : p);
+      }
+      if (removed?.is_vice_captain && next.length > 0) {
+        const idx = next.findIndex(p => !p.is_captain);
+        if (idx !== -1) next = next.map((p, i) => i === idx ? { ...p, is_vice_captain: true } : p);
+      }
+      return next;
+    });
+
+  // starters/bench are derived purely from each pick's position among same-
+  // position picks (first N per formation slot = starters, rest = bench) —
+  // so swapping two same-position players' array positions is exactly what
+  // moves one to the starting XI and the other to the bench.
+  //
+  // Two-step "arm and target" interaction: clicking a swap trigger with
+  // nothing armed arms that player (armedId); clicking a *different*
+  // same-position player's trigger next completes the swap; clicking the
+  // already-armed player again cancels.
+  const swapPlayers = (idA, idB) =>
+    setPicks(prev => {
+      const idxA = prev.findIndex(p => p.player.id === idA);
+      const idxB = prev.findIndex(p => p.player.id === idB);
+      if (idxA === -1 || idxB === -1) return prev;
+      const next = [...prev];
+      [next[idxA], next[idxB]] = [next[idxB], next[idxA]];
+      return next;
+    });
+
+  const handleSwapClick = (playerId) => {
+    if (armedId === null) { setArmedId(playerId); return; }
+    if (armedId === playerId) { setArmedId(null); return; }
+    const a = picks.find(p => p.player.id === armedId);
+    const b = picks.find(p => p.player.id === playerId);
+    if (a && b && a.player.position === b.player.position) {
+      swapPlayers(armedId, playerId);
+    }
+    setArmedId(null);
+  };
 
   const setCaptain = (playerId) =>
     setPicks(prev => prev.map(p => ({
@@ -394,7 +403,10 @@ export default function MyTeamPage() {
       const refreshedTeam = await getMyTeam(season.id);
       setMyTeam(refreshedTeam);
       setSavedPicks(savedP);
-      setPicks([]);
+      const draft = deriveDraft(savedP, allPlayers);
+      setPicks(draft.picks);
+      setFormation(draft.formation);
+      setArmedId(null);
       setStep("view");
     } catch (e) {
       setMsg("❌ " + (e.response?.data?.detail ?? t("myTeam.save.genericError")));
@@ -403,36 +415,26 @@ export default function MyTeamPage() {
     }
   };
 
-  // ── Вход/выход из режима редактирования ──────────────────────────────────
-  const enterEdit = () => {
-    const editPicks = savedPicks.map(pick => {
-      const full = allPlayers.find(p => p.id === pick.player.id);
-      return {
-        player: { ...pick.player, season_points: full?.season_points ?? 0 },
-        is_captain: pick.is_captain,
-        is_vice_captain: pick.is_vice_captain,
-      };
-    });
-
-    // Определяем схему по стартовому составу (slot <= 11)
-    const counts = { D: 0, M: 0, F: 0 };
-    savedPicks.filter(p => p.slot <= 11).forEach(p => {
-      if (counts[p.player.position] !== undefined) counts[p.player.position]++;
-    });
-    const matched = Object.entries(FORMATIONS).find(
-      ([, f]) => f.D === counts.D && f.M === counts.M && f.F === counts.F
-    );
-    setFormation(matched ? matched[0] : "4-4-2");
-
-    setOriginalIds(new Set(editPicks.map(p => p.player.id)));
-    setPicks(editPicks);
+  // ── Вход в режим трансферов / отмена несохранённых изменений ─────────────
+  // Обычный режим (step === "view") уже держит актуальный черновик в picks —
+  // переход в трансферы просто переключает набор доступных действий, ничего
+  // не пересобирая, чтобы не потерять несохранённые правки капитана/состава.
+  const enterTransfers = () => {
+    setOriginalIds(new Set(savedPicks.map(p => p.player.id)));
     setMsg("");
+    setArmedId(null);
     setStep("edit");
   };
 
-  const cancelEdit = () => {
-    setPicks([]);
+  // Откатывает черновик к последнему сохранённому состоянию — используется и
+  // чтобы отменить трансферы, и чтобы отменить несохранённую перестановку
+  // капитана/состава в обычном режиме.
+  const discardChanges = () => {
+    const draft = deriveDraft(savedPicks, allPlayers);
+    setPicks(draft.picks);
+    setFormation(draft.formation);
     setMsg("");
+    setArmedId(null);
     setStep("view");
   };
 
@@ -464,46 +466,88 @@ export default function MyTeamPage() {
     );
   }
 
-  if (step === "view") {
-    return (
-      <div className={s.page}>
-        <div className={s.header}>
-          <div>
-            <h1>{myTeam?.name}</h1>
-            <p className={s.sub}>
-              {season?.name} · {round ? t("myTeam.round", { number: round.number }) : ""}
-              {round?.deadline && (
-                <span style={{ color: new Date(round.deadline + "Z") < new Date() ? "var(--red)" : undefined }}>
-                  {" "}· {new Date(round.deadline + "Z") < new Date()
-                    ? t("myTeam.deadlinePassed")
-                    : t("myTeam.deadline", { date: formatDeadline(round.deadline, i18n.language) })}
-                </span>
-              )}
-            </p>
-          </div>
-        </div>
-        <ViewStep
-          myTeam={myTeam}
-          savedPicks={savedPicks}
-          allPlayers={allPlayers}
-          season={season}
-          round={round}
-          onEdit={enterEdit}
-        />
-      </div>
-    );
-  }
+  // step === "build" | "view" | "edit"
+  // "view"  — обычный режим: капитан/вице-капитан и замены старт↔скамейка
+  //           доступны сразу, без отдельного входа в редактирование.
+  // "edit"  — режим "Сделать трансферы": только добавление/удаление игроков
+  //           через пикер, без управления капитаном/составом.
+  // "build" — первичная сборка состава: доступно всё сразу.
+  const isTransfers = step === "edit";
+  const isLineup    = step === "view";
+  const showPicker  = step === "build" || isTransfers;
+  const showLineup  = step === "build" || isLineup;
 
-  // step === "build" | "edit"
-  const isEditing = step === "edit";
+  const pitchSideContent = (
+    <div className={s.pitchSide}>
+      {armedId && <div className={s.swapHint}>{t("myTeam.bench.swapHint")}</div>}
+      <div className={s.pitchRow}>
+        <Pitch
+          starters={starters}
+          captainId={captainId}
+          viceCaptainId={viceCaptainId}
+          onCaptain={showLineup ? setCaptain : undefined}
+          onVC={showLineup ? setViceCaptain : undefined}
+          onRemove={showPicker ? removePlayer : undefined}
+          onSwapClick={showLineup ? handleSwapClick : undefined}
+          armedId={armedId}
+        />
+
+        <div className={s.benchSection}>
+          <div className={s.benchHeader}>
+            <span className={s.benchTitle}>{t("myTeam.bench.title")}</span>
+            <span className={s.benchSub2}>{t("myTeam.bench.count", { count: bench.length })}</span>
+          </div>
+          {bench.length === 0
+            ? <div className={s.benchEmpty}>{t("myTeam.bench.autoFormed")}</div>
+            : <div className={s.benchList}>
+                {bench.map(pick => (
+                  <BenchCard key={pick.player.id} pick={pick}
+                    isCaptain={captainId === pick.player.id}
+                    isVC={viceCaptainId === pick.player.id}
+                    onRemove={showPicker ? () => removePlayer(pick.player.id) : undefined}
+                    onSwapClick={showLineup ? () => handleSwapClick(pick.player.id) : undefined}
+                    armed={armedId === pick.player.id}
+                  />
+                ))}
+              </div>
+          }
+        </div>
+      </div>
+
+      <div className={s.saveArea}>
+        {msg && <div className={s.msg}>{msg}</div>}
+        {(step === "build" || isDirty) && (
+          <button
+            className={s.saveBtn}
+            disabled={picks.length < 15 || saving || budgetLeft < 0 || transfersUsed > MAX_TRANSFERS}
+            onClick={save}
+          >
+            {saving ? t("myTeam.save.saving") : step === "build" ? t("myTeam.save.saveTeam") : t("myTeam.save.saveChanges")}
+          </button>
+        )}
+        {step !== "build" && isDirty && (
+          <button className={s.cancelBtn} disabled={saving} onClick={discardChanges}>
+            {t("myTeam.save.cancel")}
+          </button>
+        )}
+        {showPicker && picks.length < 15 && (
+          <p className={s.hint}>{t("myTeam.save.needMore", { count: 15 - picks.length })}</p>
+        )}
+        {isTransfers && transfersUsed > MAX_TRANSFERS && (
+          <p className={s.hint}>{t("myTeam.save.transferLimitExceeded", { max: MAX_TRANSFERS })}</p>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className={s.page}>
       <div className={s.header}>
         <div>
-          <h1>{isEditing ? myTeam?.name : (teamName || t("myTeam.defaultTeamName"))}</h1>
+          <h1>{step === "build" ? (teamName || t("myTeam.defaultTeamName")) : myTeam?.name}</h1>
           <p className={s.sub}>
             {season?.name} · {round ? t("myTeam.round", { number: round.number }) : ""}
-            {isEditing && t("myTeam.editingSuffix")}
+            {isTransfers && t("myTeam.transfersSuffix")}
             {round?.deadline && (
               <span style={{ color: new Date(round.deadline + "Z") < new Date() ? "var(--red)" : undefined }}>
                 {" "}· {new Date(round.deadline + "Z") < new Date()
@@ -513,178 +557,168 @@ export default function MyTeamPage() {
             )}
           </p>
         </div>
-        <div className={s.headerRight}>
-          {isEditing && (
-            <div className={s.countBox}>
-              <span className={s.budgetLabel}>{t("myTeam.budgetBox.transfers")}</span>
-              <span className={transfersUsed > MAX_TRANSFERS ? s.budgetOver : s.budgetOk}>
-                {transfersUsed}/{MAX_TRANSFERS}
+        {showPicker && (
+          <div className={s.headerRight}>
+            {isTransfers && (
+              <div className={s.countBox}>
+                <span className={s.budgetLabel}>{t("myTeam.budgetBox.transfers")}</span>
+                <span className={transfersUsed > MAX_TRANSFERS ? s.budgetOver : s.budgetOk}>
+                  {transfersUsed}/{MAX_TRANSFERS}
+                </span>
+              </div>
+            )}
+            <div className={s.budgetBox}>
+              <span className={s.budgetLabel}>{t("myTeam.budgetBox.budget")}</span>
+              <span className={budgetLeft < 0 ? s.budgetOver : s.budgetOk}>
+                £{budgetLeft.toFixed(1)}m
               </span>
+              <div className={s.budgetBarTrack}>
+                <div
+                  className={`${s.budgetBarFill} ${budgetLeft < 0 ? s.budgetBarFillOver : ""}`}
+                  style={{ width: `${Math.min(100, (budgetUsed / BUDGET) * 100)}%` }}
+                />
+              </div>
             </div>
-          )}
-          <div className={s.budgetBox}>
-            <span className={s.budgetLabel}>{t("myTeam.budgetBox.budget")}</span>
-            <span className={budgetLeft < 0 ? s.budgetOver : s.budgetOk}>
-              £{budgetLeft.toFixed(1)}m
-            </span>
-            <div className={s.budgetBarTrack}>
-              <div
-                className={`${s.budgetBarFill} ${budgetLeft < 0 ? s.budgetBarFillOver : ""}`}
-                style={{ width: `${Math.min(100, (budgetUsed / BUDGET) * 100)}%` }}
-              />
+            <div className={s.countBox}>
+              <span className={s.budgetLabel}>{t("myTeam.budgetBox.players")}</span>
+              <span className={s.budgetOk}>{picks.length}/15</span>
             </div>
           </div>
-          <div className={s.countBox}>
-            <span className={s.budgetLabel}>{t("myTeam.budgetBox.players")}</span>
-            <span className={s.budgetOk}>{picks.length}/15</span>
-          </div>
+        )}
+      </div>
+
+      {isTransfers && (
+        <div className={s.editBar}>
+          <button className={s.editBtn} onClick={discardChanges}>{t("myTeam.backBtn")}</button>
         </div>
-      </div>
+      )}
 
-      <div className={s.formationBar}>
-        <span className={s.formationLabel}>{t("myTeam.formationLabel")}</span>
-        {Object.keys(FORMATIONS).map(f => (
-          <button key={f}
-            className={formation === f ? s.fmtnActive : s.fmtnBtn}
-            onClick={() => setFormation(f)}
-          >{f}</button>
-        ))}
-      </div>
-
-      <div className={s.layout}>
-        {/* Лево: поле + скамейка + сохранение */}
-        <div className={s.pitchSide}>
-          <Pitch
-            starters={starters}
-            captainId={captainId}
-            viceCaptainId={viceCaptainId}
-            onCaptain={setCaptain}
-            onVC={setViceCaptain}
-            onRemove={removePlayer}
+      {isLineup && myTeam && (
+        <div className={s.statsRow}>
+          <StatCard
+            label={t("myTeam.stats.totalPoints")}
+            value={myTeam.total_points}
+            sub={t("myTeam.stats.season", { name: season?.name ?? "" })}
+            accent
           />
-
-          <div className={s.benchSection}>
-            <div className={s.benchHeader}>
-              <span className={s.benchTitle}>{t("myTeam.bench.title")}</span>
-              <span className={s.benchSub2}>{t("myTeam.bench.count", { count: bench.length })}</span>
-            </div>
-            {bench.length === 0
-              ? <div className={s.benchEmpty}>{t("myTeam.bench.autoFormed")}</div>
-              : <div className={s.benchList}>
-                  {bench.map(pick => (
-                    <BenchCard key={pick.player.id} pick={pick}
-                      isCaptain={captainId === pick.player.id}
-                      isVC={viceCaptainId === pick.player.id}
-                      onCaptain={() => setCaptain(pick.player.id)}
-                      onVC={() => setViceCaptain(pick.player.id)}
-                      onRemove={() => removePlayer(pick.player.id)}
-                    />
-                  ))}
-                </div>
-            }
-          </div>
-
-          <div className={s.saveArea}>
-            {msg && <div className={s.msg}>{msg}</div>}
-            <button
-              className={s.saveBtn}
-              disabled={picks.length < 15 || saving || budgetLeft < 0 || transfersUsed > MAX_TRANSFERS}
-              onClick={save}
-            >
-              {saving ? t("myTeam.save.saving") : isEditing ? t("myTeam.save.saveChanges") : t("myTeam.save.saveTeam")}
-            </button>
-            {isEditing && (
-              <button className={s.cancelBtn} disabled={saving} onClick={cancelEdit}>
-                {t("myTeam.save.cancel")}
-              </button>
-            )}
-            {picks.length < 15 && (
-              <p className={s.hint}>{t("myTeam.save.needMore", { count: 15 - picks.length })}</p>
-            )}
-            {isEditing && transfersUsed > MAX_TRANSFERS && (
-              <p className={s.hint}>{t("myTeam.save.transferLimitExceeded", { max: MAX_TRANSFERS })}</p>
-            )}
-          </div>
+          <StatCard
+            label={t("myTeam.stats.rank")}
+            value={myTeam.rank ? `#${myTeam.rank}` : t("common.dash")}
+            sub={t("myTeam.stats.amongTeams")}
+          />
+          <StatCard
+            label={t("myTeam.stats.lastRound")}
+            value={myTeam.last_round_points ?? t("common.dash")}
+            sub={round ? t("myTeam.round", { number: round.number }) : ""}
+          />
+          <StatCard
+            label={t("myTeam.stats.formation")}
+            value={formation}
+            sub={t("myTeam.stats.playersCount", { count: picks.length })}
+          />
         </div>
+      )}
 
-        {/* Право: пикер */}
-        <div className={s.pickerSide}>
-          <div className={s.pickerHead}>
-            <div className={s.pickerTitle}>{t("myTeam.picker.addPlayer")}</div>
+      {showLineup && (
+        <div className={s.formationBar}>
+          <div className={s.formationGroup}>
+            <span className={s.formationLabel}>{t("myTeam.formationLabel")}</span>
+            {Object.keys(FORMATIONS).map(f => (
+              <button key={f}
+                className={formation === f ? s.fmtnActive : s.fmtnBtn}
+                onClick={() => setFormation(f)}
+              >{f}</button>
+            ))}
+          </div>
+          {isLineup && (
+            <button className={s.editBtn} onClick={enterTransfers}>{t("myTeam.transfersBtn")}</button>
+          )}
+        </div>
+      )}
 
-            <div className={s.posTabs}>
-              {Object.keys(POS_LIMITS).map(pos => (
-                <button key={pos}
-                  className={pickerPos === pos ? s.posActive : s.posBtn}
-                  onClick={() => setPickerPos(pos)}
-                >
-                  <span className={`pos-badge pos-${pos}`}>{pos}</span>
-                  <span className={s.posCount}>{countByPos(pos)}/{POS_LIMITS[pos]}</span>
-                </button>
-              ))}
-            </div>
+      {showPicker ? (
+        <div className={s.layout}>
+          {pitchSideContent}
 
-            <div className={s.filterRow}>
-              <select className={s.sel} value={pickerTeam} onChange={e => setPickerTeam(e.target.value)}>
-                <option value="">{t("common.allClubs")}</option>
-                {teams.map(tm => <option key={tm.id} value={tm.id}>{tm.name}</option>)}
-              </select>
-              <select className={s.sel} value={pickerMax} onChange={e => setPickerMax(Number(e.target.value))}>
-                {PRICE_MAX_OPTIONS.map(v => (
-                  <option key={v} value={v}>{v === 99 ? t("common.anyPrice") : t("common.upTo", { price: v })}</option>
+          {/* Право: пикер */}
+          <div className={s.pickerSide}>
+            <div className={s.pickerHead}>
+              <div className={s.pickerTitle}>{t("myTeam.picker.addPlayer")}</div>
+
+              <div className={s.posTabs}>
+                {Object.keys(POS_LIMITS).map(pos => (
+                  <button key={pos}
+                    className={pickerPos === pos ? s.posActive : s.posBtn}
+                    onClick={() => setPickerPos(pos)}
+                  >
+                    <span className={`pos-badge pos-${pos}`}>{pos}</span>
+                    <span className={s.posCount}>{countByPos(pos)}/{POS_LIMITS[pos]}</span>
+                  </button>
                 ))}
-              </select>
-              <select className={s.sel} value={pickerSort} onChange={e => setPickerSort(e.target.value)}>
-                {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{t(o.labelKey)}</option>)}
-              </select>
+              </div>
+
+              <div className={s.filterRow}>
+                <select className={s.sel} value={pickerTeam} onChange={e => setPickerTeam(e.target.value)}>
+                  <option value="">{t("common.allClubs")}</option>
+                  {teams.map(tm => <option key={tm.id} value={tm.id}>{tm.name}</option>)}
+                </select>
+                <select className={s.sel} value={pickerMax} onChange={e => setPickerMax(Number(e.target.value))}>
+                  {PRICE_MAX_OPTIONS.map(v => (
+                    <option key={v} value={v}>{v === 99 ? t("common.anyPrice") : t("common.upTo", { price: v })}</option>
+                  ))}
+                </select>
+                <select className={s.sel} value={pickerSort} onChange={e => setPickerSort(e.target.value)}>
+                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{t(o.labelKey)}</option>)}
+                </select>
+              </div>
+
+              <input className={s.search} placeholder={t("common.searchByName")}
+                value={pickerSearch} onChange={e => setPickerSearch(e.target.value)} />
             </div>
 
-            <input className={s.search} placeholder={t("common.searchByName")}
-              value={pickerSearch} onChange={e => setPickerSearch(e.target.value)} />
-          </div>
-
-          <div className={s.playerList}>
-            {filtered.length === 0 && <div className={s.empty}>{t("players.empty")}</div>}
-            {filtered.map(p => {
-              const added = !!picks.find(pk => pk.player.id === p.id);
-              const ok    = canAdd(p);
-              const why   = !added && !ok ? blockReason(p) : "";
-              return (
-                <div key={p.id}
-                  className={`${s.playerRow} ${added ? s.playerAdded : ""}`}
-                  title={why}
-                  onClick={() => setDetailId(p.id)}
-                >
-                  <div className={s.pInfo}>
-                    {p.photo_url && (
-                      <img src={p.photo_url} alt="" className={s.pAvatar}
-                        onError={e => { e.target.style.display = "none"; }} />
-                    )}
-                    <div>
-                      <div className={s.pName}>{p.name}</div>
-                      <div className={s.pTeam}>{p.team?.name ?? t("common.dash")}</div>
+            <div className={s.playerList}>
+              {filtered.length === 0 && <div className={s.empty}>{t("players.empty")}</div>}
+              {filtered.map(p => {
+                const added = !!picks.find(pk => pk.player.id === p.id);
+                const ok    = canAdd(p);
+                const why   = !added && !ok ? blockReason(p) : "";
+                return (
+                  <div key={p.id}
+                    className={`${s.playerRow} ${added ? s.playerAdded : ""}`}
+                    title={why}
+                    onClick={() => setDetailId(p.id)}
+                  >
+                    <div className={s.pInfo}>
+                      {p.photo_url && (
+                        <img src={p.photo_url} alt="" className={s.pAvatar}
+                          onError={e => { e.target.style.display = "none"; }} />
+                      )}
+                      <div>
+                        <div className={s.pName}>{p.name}</div>
+                        <div className={s.pTeam}>{p.team?.name ?? t("common.dash")}</div>
+                      </div>
+                    </div>
+                    <div className={s.pRight}>
+                      <div className={s.pPts}>
+                        {p.season_points}<span className={s.pPtsLabel}>{t("myTeam.playerCard.points")}</span>
+                      </div>
+                      <div className={s.pPrice}>£{p.price}m</div>
+                      <button
+                        className={added ? s.addedBtn : ok ? s.addBtn : s.disabledBtn}
+                        onClick={e => { e.stopPropagation(); !added && addPlayer(p); }}
+                        disabled={added || !ok}
+                        aria-label={added ? t("myTeam.picker.addedAria", { name: p.name }) : t("myTeam.picker.addAria", { name: p.name })}
+                      >
+                        {added ? "✓" : "+"}
+                      </button>
                     </div>
                   </div>
-                  <div className={s.pRight}>
-                    <div className={s.pPts}>
-                      {p.season_points}<span className={s.pPtsLabel}>{t("myTeam.playerCard.points")}</span>
-                    </div>
-                    <div className={s.pPrice}>£{p.price}m</div>
-                    <button
-                      className={added ? s.addedBtn : ok ? s.addBtn : s.disabledBtn}
-                      onClick={e => { e.stopPropagation(); !added && addPlayer(p); }}
-                      disabled={added || !ok}
-                      aria-label={added ? t("myTeam.picker.addedAria", { name: p.name }) : t("myTeam.picker.addAria", { name: p.name })}
-                    >
-                      {added ? "✓" : "+"}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      ) : pitchSideContent}
 
       <PlayerDetailModal playerId={detailId} onClose={() => setDetailId(null)} />
     </div>

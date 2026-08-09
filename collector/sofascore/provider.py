@@ -89,3 +89,10 @@ def get_team_squad(team_id: int, provider: str) -> list[dict]:
         for entry in raw_players
         if entry.get("player", {}).get("id")
     ]
+
+
+def get_standings(tournament_id: int, season_id: int, provider: str) -> list[dict]:
+    """Final/current league table for one season — [{"team_id", "rank"}, ...]."""
+    if provider == "legacy":
+        return client.get_standings(tournament_id, season_id)
+    return datafc_client.get_standings(tournament_id, season_id)

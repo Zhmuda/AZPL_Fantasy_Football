@@ -13,14 +13,16 @@ const POSITIONS = [
   { key: "F", labelKey: "players.positions.F" },
 ];
 
-const SORT_OPTIONS = [
-  { key: "season_points",  labelKey: "common.sortPoints" },
-  { key: "season_goals",   labelKey: "common.sortGoals" },
-  { key: "season_assists", labelKey: "common.sortAssists" },
-  { key: "price",          labelKey: "common.sortPrice" },
+const SORTABLE_COLUMNS = [
+  { field: "season_matches", labelKey: "players.columns.matches",  titleKey: "players.columns.matchesTitle" },
+  { field: "season_goals",   labelKey: "players.columns.goals",    titleKey: "players.columns.goalsTitle" },
+  { field: "season_assists", labelKey: "players.columns.assists",  titleKey: "players.columns.assistsTitle" },
+  { field: "season_points",  labelKey: "players.columns.points" },
+  { field: "price",          labelKey: "players.columns.price" },
 ];
 
 const PRICE_MAX_OPTIONS = [99, 5, 7, 9, 12];
+const PAGE_SIZE = 10;
 
 export default function PlayersPage() {
   const { t } = useTranslation();
@@ -33,8 +35,10 @@ export default function PlayersPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch]       = useState("");
   const [sortBy, setSortBy]       = useState("season_points");
+  const [sortDir, setSortDir]     = useState("desc");
   const [detailId, setDetailId]   = useState(null);
   const [season, setSeason]       = useState(null);
+  const [page, setPage]           = useState(0);
 
   useEffect(() => { getTeams().then(setTeams); }, []);
   useEffect(() => {
@@ -62,7 +66,22 @@ export default function PlayersPage() {
 
   const sorted = [...players]
     .filter(p => p.price <= maxPrice)
-    .sort((a, b) => b[sortBy] - a[sortBy]);
+    .sort((a, b) => sortDir === "asc" ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy]);
+
+  // Clicking the active column again flips direction; clicking a different
+  // one switches to it, defaulting to highest-first.
+  const toggleSort = (field) => {
+    if (field === sortBy) setSortDir(d => d === "desc" ? "asc" : "desc");
+    else { setSortBy(field); setSortDir("desc"); }
+  };
+
+  // Any filter/sort change can shrink the list below the current page —
+  // always land back on page 1 rather than showing an empty page.
+  useEffect(() => { setPage(0); }, [position, teamId, search, maxPrice, sortBy, sortDir]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const pageItems = sorted.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE);
 
   return (
     <div className={s.page}>
@@ -95,11 +114,6 @@ export default function PlayersPage() {
           ))}
         </select>
 
-        {/* Sort */}
-        <select className={s.select} value={sortBy} onChange={e => setSortBy(e.target.value)}>
-          {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{t(o.labelKey)}</option>)}
-        </select>
-
         {/* Search */}
         <input className={s.search} placeholder={t("common.searchByName")}
           value={searchInput} onChange={e => setSearchInput(e.target.value)} />
@@ -116,17 +130,25 @@ export default function PlayersPage() {
                 <th>{t("players.columns.player")}</th>
                 <th>{t("players.columns.position")}</th>
                 <th>{t("players.columns.club")}</th>
-                <th title={t("players.columns.matchesTitle")}>{t("players.columns.matches")}</th>
-                <th title={t("players.columns.goalsTitle")}>{t("players.columns.goals")}</th>
-                <th title={t("players.columns.assistsTitle")}>{t("players.columns.assists")}</th>
-                <th>{t("players.columns.points")}</th>
-                <th>{t("players.columns.price")}</th>
+                {SORTABLE_COLUMNS.map(col => (
+                  <th
+                    key={col.field}
+                    className={s.sortable}
+                    title={col.titleKey ? t(col.titleKey) : undefined}
+                    onClick={() => toggleSort(col.field)}
+                  >
+                    {t(col.labelKey)}
+                    <span className={sortBy === col.field ? s.sortArrowActive : s.sortArrow}>
+                      {sortBy === col.field ? (sortDir === "asc" ? "▲" : "▼") : "▾"}
+                    </span>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {sorted.map((p, i) => (
+              {pageItems.map((p, i) => (
                 <tr key={p.id} className={s.row} onClick={() => setDetailId(p.id)}>
-                  <td className={s.rank}>{i + 1}</td>
+                  <td className={s.rank}>{currentPage * PAGE_SIZE + i + 1}</td>
                   <td className={s.name}>
                     {p.photo_url && (
                       <img src={p.photo_url} alt="" className={s.avatar}
@@ -146,6 +168,28 @@ export default function PlayersPage() {
             </tbody>
           </table>
           {sorted.length === 0 && <div className={s.empty}>{t("players.empty")}</div>}
+        </div>
+      )}
+
+      {!loading && sorted.length > 0 && totalPages > 1 && (
+        <div className={s.pagination}>
+          <button
+            className={s.pageBtn}
+            disabled={currentPage === 0}
+            onClick={() => setPage(p => Math.max(0, p - 1))}
+          >
+            {t("players.pagination.prev")}
+          </button>
+          <span className={s.pageInfo}>
+            {t("players.pagination.page", { current: currentPage + 1, total: totalPages })}
+          </span>
+          <button
+            className={s.pageBtn}
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+          >
+            {t("players.pagination.next")}
+          </button>
         </div>
       )}
 

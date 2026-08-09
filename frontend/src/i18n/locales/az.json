@@ -4,8 +4,17 @@
     "players": "Oyunçular",
     "myTeam": "Komandam",
     "leaderboard": "Turnir cədvəli",
+    "rules": "Qaydalar",
+    "leagues": "Liqalar",
     "logout": "Çıxış",
     "login": "Daxil ol"
+  },
+  "footer": {
+    "support": "Dəstək",
+    "vk": "VKontakte-də bizik",
+    "telegram": "Telegram-da bizik",
+    "comingSoon": "Tezliklə",
+    "copy": "© {{year}} AZPL Fantasy · qeyri-rəsmi fan-layihə"
   },
   "settings": {
     "title": "Profil tənzimləmələri",
@@ -20,7 +29,8 @@
   "playerDetail": {
     "close": "Bağla",
     "recentMatches": "Son oyunlar",
-    "noMatches": "Hələ oyun keçirilməyib"
+    "noMatches": "Hələ oyun keçirilməyib",
+    "noPoints": "Bu matçda xal gətirən hadisə olmayıb"
   },
   "errorBoundary": {
     "title": "Nəsə səhv getdi",
@@ -78,7 +88,12 @@
       "points": "Xallar",
       "price": "Qiymət"
     },
-    "empty": "Oyunçu tapılmadı"
+    "empty": "Oyunçu tapılmadı",
+    "pagination": {
+      "prev": "← Geri",
+      "next": "İrəli →",
+      "page": "Səhifə {{current}} / {{total}}"
+    }
   },
   "leaderboard": {
     "title": "Turnir cədvəli",
@@ -110,8 +125,9 @@
     "round": "{{number}}-cü tur",
     "deadline": "Son tarix: {{date}}",
     "deadlinePassed": "Son tarix keçib",
-    "editingSuffix": " · Tərkib redaktə edilir",
-    "editBtn": "✏️ Tərkibi redaktə et",
+    "transfersSuffix": " · Transferlər",
+    "transfersBtn": "🔄 Transfer et",
+    "backBtn": "← Adi rejim",
     "stats": {
       "totalPoints": "Ümumi xal",
       "season": "{{name}} mövsümü",
@@ -129,6 +145,9 @@
       "inactiveTag": "⚠ liqada deyil",
       "captainTitle": "Kapitan (×2)",
       "vcTitle": "Vitse-kapitan (×2, kapitan oynamayıbsa)",
+      "promoteTitle": "Əsas tərkibə keçir",
+      "demoteTitle": "Ehtiyata keçir",
+      "swapHint": "Dəyişmək üçün eyni mövqedə oyunçu seçin — ləğv etmək üçün yenidən ⇄ basın",
       "removeAction": "Sil"
     },
     "budgetBox": {
@@ -161,6 +180,100 @@
       "squadFull": "tərkib tamamlanıb",
       "clubLimit": "bir klubdan maksimum 3",
       "transferLimit": "transfer limiti (tur üçün 3)"
+    }
+  },
+  "rules": {
+    "title": "Fantezi liqasının qaydaları",
+    "subtitle": "{{season}} mövsümü · Azərbaycan Premyer Liqası",
+    "squad": {
+      "heading": "Tərkibin qurulması",
+      "items": [
+        "15 oyunçu: 2 qapıçı, 5 müdafiəçi, 5 yarımmüdafiəçi, 3 hücumçu",
+        "Bütün tərkib üçün büdcə — £100m",
+        "Bir klubdan maksimum 3 oyunçu",
+        "Sahəyə 11 oyunçu bu sxemlərdən biri ilə çıxır: 4-4-2, 4-3-3 və ya 5-2-3 — qalan 4 nəfər ehtiyatda qalır"
+      ]
+    },
+    "lineup": {
+      "heading": "Kapitan, vitse-kapitan və tur tərkibi",
+      "items": [
+        "Kapitan və vitse-kapitan əsas 11 nəfər arasından seçilir",
+        "Kapitan ən azı 1 dəqiqə oynayıbsa, onun xalları ikiqat hesablanır",
+        "Kapitan heç oynamayıbsa — vitse-kapitanın xalları ikiqat hesablanır",
+        "Adi rejimdə (transferə keçmədən) son tarixə qədər istənilən vaxt kapitanı, vitse-kapitanı dəyişmək və oyunçuları əsas tərkib ilə ehtiyat arasında yerini dəyişmək olar — bu transfer sayılmır və limitə tabe deyil"
+      ]
+    },
+    "transfers": {
+      "heading": "Transferlər",
+      "items": [
+        "Tur üçün maksimum 3 transfer — tərkibdəki oyunçunun başqası ilə əvəz edilməsi",
+        "Turun son tarixi — turun ilk matçının başlama vaxtıdır; bundan sonra həmin tur üçün dəyişikliklər bağlanır",
+        "Transferlər adi rejimdən ayrı, «Transfer et» düyməsi ilə edilir — orada yalnız oyunçu dəyişikliyi var, kapitan və tərkib idarəsi yoxdur"
+      ]
+    },
+    "scoring": {
+      "heading": "Xallar necə hesablanır",
+      "intro": "Xallar turun hər matçından sonra avtomatik hesablanır — hər oyunçunun matç statistikası əsasında.",
+      "table": { "action": "Hadisə", "points": "Xal" },
+      "rows": {
+        "playedShort": "Sahədə oldu (1–59 dəqiqə)",
+        "playedFull": "60+ dəqiqə oynadı",
+        "goalGkDef": "Qapıçı və ya müdafiəçinin qolu",
+        "goalMid": "Yarımmüdafiəçinin qolu",
+        "goalFwd": "Hücumçunun qolu",
+        "assist": "Qol pası",
+        "cleanSheetGkDef": "Qapıçı/müdafiəçi — öz qapısına buraxmadı (60+ dəqiqə)",
+        "cleanSheetMid": "Yarımmüdafiəçi — öz qapısına buraxmadı (60+ dəqiqə)",
+        "savesPerThree": "Qapıçının hər 3 xilası üçün",
+        "penaltySave": "Penaltini tutdu",
+        "penaltyMiss": "Penaltini vurmadı",
+        "yellowCard": "Sarı vərəqə",
+        "redCard": "Qırmızı vərəqə",
+        "ownGoal": "Öz qapısına qol"
+      },
+      "captainNote": "Kapitanın yekun xalları ikiqat hesablanır (×2). Hücumçulara buraxmadığı qapı üçün xal verilmir.",
+      "benchNote": "Ehtiyatdakı oyunçular xal gətirmir — avtomatik əvəzetmə yoxdur. Oyunçu travmalıdırsa və ya klub heyətinə düşmürsə, onu əvvəlcədən əl ilə əsas tərkibə keçirin."
+    },
+    "pricing": {
+      "heading": "Oyunçunun qiyməti necə formalaşır",
+      "items": [
+        "Qiymət oyunçunun bu mövsümdəki xallarından, qol və asistlərindən, həmçinin oynadığı matçların sayından asılıdır",
+        "Bu mövsüm 5-dən az matç oynayan oyunçularda qiymətin bir hissəsi klubun keçən mövsümdəki yekun yerinə əsaslanır — ilk matçdan sonra qiymət dərhal minimuma düşməsin deyə",
+        "Qiymətlər hər turun statistikası sinxronlaşdıqdan sonra avtomatik yenidən hesablanır",
+        "Bəzi digər fantezi oyunlardan fərqli olaraq, qiymət neçə menecerin oyunçunu seçməsindən yox, yalnız oyun göstəricilərindən asılıdır"
+      ]
+    }
+  },
+  "leagues": {
+    "title": "Liqalarım",
+    "subtitle": "Dostlarınızla ümumi reytinqdən ayrı yarışın",
+    "createHeading": "Liqa yarat",
+    "namePlaceholder": "Məsələn: Ofis liqası",
+    "createBtn": "Yarat",
+    "joinHeading": "Kodla qoşul",
+    "codePlaceholder": "Dəvət kodu",
+    "joinBtn": "Qoşul",
+    "empty": "Hələ heç bir liqada deyilsiniz",
+    "emptyHint": "Öz liqanızı yaradın və ya dostunuzun kodu ilə qoşulun",
+    "members_other": "{{count}} üzv",
+    "owner": "Yaradıcı",
+    "code": "Dəvət kodu",
+    "copyBtn": "Kopyala",
+    "copied": "Kopyalandı",
+    "backBtn": "← Bütün liqalar",
+    "leaveBtn": "Liqadan çıx",
+    "leaveConfirm": "«{{name}}» liqasından çıxılsın?",
+    "noTeamYet": "komanda hələ yaradılmayıb",
+    "columns": {
+      "rank": "#",
+      "manager": "Menecer",
+      "team": "Komanda",
+      "points": "Xallar"
+    },
+    "errors": {
+      "nameRequired": "Liqa adını daxil edin",
+      "codeRequired": "Kodu daxil edin",
+      "generic": "Xəta baş verdi. Yenidən cəhd edin."
     }
   }
 }
