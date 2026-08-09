@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.content_filter import contains_banned_content
 from app.core.limiter import limiter
 from app.db.session import get_db
 from app.models.user import User
@@ -14,6 +15,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 @limiter.limit("5/hour")
 async def register(request: Request, body: UserRegister, db: AsyncSession = Depends(get_db)):
+    if contains_banned_content(body.username):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Имя пользователя содержит недопустимые слова")
+
     existing = await db.execute(
         select(User).where((User.email == body.email) | (User.username == body.username))
     )

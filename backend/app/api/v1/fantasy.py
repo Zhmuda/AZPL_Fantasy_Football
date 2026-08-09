@@ -9,6 +9,7 @@ from app.db.session import get_db
 from app.models.user import User
 from app.models.league import Player, Round
 from app.models.fantasy import FantasyTeam, FantasyPick, FantasyRoundScore
+from app.core.content_filter import contains_banned_content
 from app.core.security import get_current_user
 from app.schemas.fantasy import (
     FantasyTeamCreate, FantasyTeamOut, PickCreate,
@@ -26,6 +27,9 @@ async def create_team(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if contains_banned_content(body.name):
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Название команды содержит недопустимые слова")
+
     existing = await db.execute(
         select(FantasyTeam).where(
             FantasyTeam.user_id == user.id,

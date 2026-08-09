@@ -9,6 +9,7 @@ from app.db.session import get_db
 from app.models.user import User
 from app.models.fantasy import FantasyTeam
 from app.models.private_league import MiniLeague, MiniLeagueMember
+from app.core.content_filter import contains_banned_content
 from app.core.security import get_current_user
 from app.schemas.mini_league import (
     MiniLeagueCreate, MiniLeagueJoin, MiniLeagueOut,
@@ -51,6 +52,9 @@ async def create_league(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if contains_banned_content(body.name):
+        raise HTTPException(400, "Название лиги содержит недопустимые слова")
+
     code = await _generate_code(db)
     league = MiniLeague(name=body.name.strip(), code=code, season_id=body.season_id, owner_user_id=user.id)
     db.add(league)
