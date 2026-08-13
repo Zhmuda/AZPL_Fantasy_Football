@@ -37,6 +37,29 @@
 .manager  { color: var(--muted); font-size: 13px; }
 .pts { font-weight: 700; font-size: 18px; color: var(--primary); text-align: right; }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.pageBtn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 13px;
+  transition: all .15s;
+}
+.pageBtn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.pageBtn:disabled { opacity: .4; cursor: not-allowed; }
+.pageInfo { font-size: 13px; color: var(--muted); min-width: 90px; text-align: center; }
+
 @media (max-width: 640px) {
   .page { padding: 20px 12px; }
+  .pagination { gap: 10px; }
+  .pageInfo { min-width: 70px; font-size: 12px; }
 }
