@@ -7,10 +7,12 @@ Run inside the backend container (needs app.* imports + DB access):
     docker compose exec backend python scripts/seed_demo_users.py
     docker compose exec backend python scripts/seed_demo_users.py --count 30
     docker compose exec backend python scripts/seed_demo_users.py --count 10 --dry-run
+    docker compose exec backend python scripts/seed_demo_users.py --undo
 
 Demo accounts created:
-    email:    manager01@azpl-demo.local .. manager30@azpl-demo.local
-    username: manager01 .. manager30
+    email:    <random username>@azpl-demo.local
+    username: e.g. "elvin_23", "aysel_bk", "tural94" — varied first-name +
+              suffix combos, not a giveaway sequential pattern
     password: Demo12345!   (same for all — throwaway seed accounts, not
                              meant to be handed out; the site owner can log
                              into any of them to poke around)
@@ -20,7 +22,13 @@ Talks to the DB directly via the same models/password hashing the API uses
 rate-limited to 5/hour per IP, which 30 signups would blow through). Squads
 are built respecting the real game rules (budget, position quota, 3-per-club
 cap) so they're indistinguishable from a squad a real player put together.
-Safe to re-run: usernames already in the DB are skipped, not duplicated.
+
+Every demo account's email ends in @azpl-demo.local (never user-visible —
+only usernames/team names are shown in the UI) — that's the internal marker
+used to find and remove them again with --undo, independent of whatever
+username/team-name text happens to be on any given run.
+Safe to re-run without --undo too: username collisions (against ALL users,
+not just past demo runs) are skipped, never duplicated.
 """
 import argparse
 import asyncio
@@ -30,7 +38,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import AsyncSessionLocal
@@ -42,7 +50,6 @@ from app.models.fantasy import FantasyTeam, FantasyPick
 
 PASSWORD = "Demo12345!"
 EMAIL_DOMAIN = "azpl-demo.local"
-USERNAME_PREFIX = "manager"
 
 FORMATIONS = {
     "4-4-2": {"G": 1, "D": 4, "M": 4, "F": 2},
@@ -54,29 +61,75 @@ BUDGET = 100.0
 CLUB_LIMIT = 3
 MAX_SQUAD_ATTEMPTS = 300
 
-ADJECTIVES = [
-    "Бакинские", "Каспийские", "Стальные", "Огненные", "Быстрые",
-    "Непобедимые", "Горные", "Ночные", "Южные", "Золотые",
-    "Дикие", "Королевские", "Летающие", "Древние", "Смелые",
+# First names used to build usernames — mixed male/female, Azerbaijani-
+# flavored (Latin transliteration, matching how usernames actually look on
+# this site) so they blend in rather than reading as a generated batch.
+FIRST_NAMES = [
+    "elvin", "tural", "kamran", "rashad", "farid", "orkhan", "murad", "ilkin",
+    "anar", "vusal", "elshan", "samir", "fuad", "nihad", "ceyhun", "ramin",
+    "vugar", "nicat", "emin", "rustam", "aydin", "elnur", "kanan", "toghrul",
+    "bakhtiyar", "namig", "shahin", "zaur", "huseyn", "mehman",
+    "aysel", "nigar", "leyla", "gunel", "aygun", "sevinj", "nermin",
+    "zeynab", "konul", "aytaj",
 ]
-NOUNS = [
-    "Тигры", "Орлы", "Волки", "Соколы", "Драконы",
-    "Львы", "Барсы", "Ястребы", "Титаны", "Рыцари",
-    "Викинги", "Гладиаторы", "Спартанцы", "Кометы", "Ракеты",
+
+# Several different username "shapes" — a random mix of these across users
+# avoids the single-template look of e.g. "manager01".."manager30".
+USERNAME_STYLES = [
+    lambda name: f"{name}{random.randint(10, 99)}",
+    lambda name: f"{name}_{random.randint(10, 99)}",
+    lambda name: f"{name}_{random.choice(['fc', 'bk', 'az', 'baku'])}",
+    lambda name: f"{name}{random.choice(['92', '95', '97', '99', '01', '03'])}",
+    lambda name: name,
 ]
+
+# Team names — deliberately not built from one adjective+noun template:
+# a mix of local flavour, football-culture in-jokes, and personal-name
+# styles, so 30 random picks read like 30 different people, not one script.
+TEAM_NAMES = [
+    "Тени Каспия", "Бакинский десант", "Последний рубеж", "Взгляд с трибуны",
+    "На флажке", "Скамейка мечты", "Финальный свисток", "Три очка не просто так",
+    "Голова кругом", "Вне игры", "Дворовая команда", "Хавбек и точка",
+    "Атака с фланга", "Свободный удар", "Экстра-тайм", "Без замен",
+    "Второй тайм", "Ва-банк", "Тактика без плана", "Ставка сделана",
+    "Красно-белые мечты", "Синий вираж", "Дерби окраины", "Кубковая лихорадка",
+    "Проходной балл", "На вылет", "Сборная подъезда", "Легенды района",
+    "Азарт и удача", "Мяч в девятку", "Верхний угол", "Пас в разрез",
+    "Контрольный выстрел", "Дубль в конце", "Огни Баку", "Каспийский бриз",
+    "Nur FC", "Xəzər Ordusu", "28 May United", "Bakı Aslanları",
+    "Neftçi Ruhu", "Qarabağ Dostları", "Zafər FC", "Dəniz Kənarı",
+]
+
+
+def generate_usernames(n: int, existing: set[str]) -> list[str]:
+    names = FIRST_NAMES[:]
+    random.shuffle(names)
+    usernames: list[str] = []
+    for name in names:
+        if len(usernames) == n:
+            break
+        style = random.choice(USERNAME_STYLES)
+        candidate = style(name)
+        attempts = 0
+        while (candidate in existing or candidate in usernames) and attempts < 10:
+            candidate = f"{name}{random.randint(100, 999)}"
+            attempts += 1
+        if candidate not in existing and candidate not in usernames:
+            usernames.append(candidate)
+    return usernames
 
 
 def generate_team_names(n: int) -> list[str]:
-    combos = [f"{a} {b}" for a in ADJECTIVES for b in NOUNS]
-    random.shuffle(combos)
-    names = combos[:n]
-    # Sanity check — the curated word lists shouldn't ever trip the filter,
-    # but if a future edit to either list does, fail loudly instead of
-    # silently sending a name the real /teams endpoint would reject.
-    bad = [name for name in names if contains_banned_content(name)]
+    names = TEAM_NAMES[:]
+    random.shuffle(names)
+    picked = names[:n]
+    # Sanity check — the curated word list shouldn't ever trip the filter,
+    # but if a future edit to it does, fail loudly instead of silently
+    # sending a name the real /teams endpoint would reject.
+    bad = [name for name in picked if contains_banned_content(name)]
     if bad:
         raise RuntimeError(f"Generated team name(s) failed the content filter: {bad}")
-    return names
+    return picked
 
 
 def build_squad(players_by_pos: dict[str, list[Player]]) -> list[Player] | None:
@@ -141,6 +194,31 @@ def pick_formation_and_slots(squad: list[Player]) -> tuple[str, dict[int, int]]:
     return formation, slots
 
 
+async def undo() -> None:
+    async with AsyncSessionLocal() as db:  # type: AsyncSession
+        demo_user_ids = (
+            (await db.execute(select(User.id).where(User.email.like(f"%@{EMAIL_DOMAIN}"))))
+            .scalars()
+            .all()
+        )
+        if not demo_user_ids:
+            print("Демо-аккаунтов не найдено — удалять нечего.")
+            return
+
+        demo_team_ids = (
+            (await db.execute(select(FantasyTeam.id).where(FantasyTeam.user_id.in_(demo_user_ids))))
+            .scalars()
+            .all()
+        )
+
+        await db.execute(delete(FantasyPick).where(FantasyPick.fantasy_team_id.in_(demo_team_ids)))
+        await db.execute(delete(FantasyTeam).where(FantasyTeam.id.in_(demo_team_ids)))
+        await db.execute(delete(User).where(User.id.in_(demo_user_ids)))
+        await db.commit()
+
+        print(f"Удалено: {len(demo_user_ids)} пользователей, {len(demo_team_ids)} команд (и все их пики).")
+
+
 async def seed(count: int, dry_run: bool) -> None:
     async with AsyncSessionLocal() as db:  # type: AsyncSession
         season = (await db.execute(select(Season).where(Season.is_active == True))).scalar_one_or_none()
@@ -173,22 +251,15 @@ async def seed(count: int, dry_run: bool) -> None:
             return
 
         existing_usernames = set(
-            (await db.execute(select(User.username).where(User.username.like(f"{USERNAME_PREFIX}%"))))
-            .scalars()
-            .all()
+            (await db.execute(select(User.username))).scalars().all()
         )
 
-        team_names = generate_team_names(count)
+        usernames = generate_usernames(count, existing_usernames)
+        team_names = generate_team_names(len(usernames))
         created = 0
-        skipped = 0
+        skipped = count - len(usernames)
 
-        for i in range(1, count + 1):
-            suffix = f"{i:02d}"
-            username = f"{USERNAME_PREFIX}{suffix}"
-            if username in existing_usernames:
-                skipped += 1
-                continue
-
+        for username, team_name in zip(usernames, team_names):
             squad = build_squad(players_by_pos)
             if not squad:
                 print(f"  ! {username}: не удалось собрать состав в рамках бюджета, пропуск")
@@ -198,7 +269,6 @@ async def seed(count: int, dry_run: bool) -> None:
             starters = [p for p in squad if slots[p.id] <= 11]
             captain, vice_captain = random.sample(starters, 2)
 
-            team_name = team_names[i - 1]
             email = f"{username}@{EMAIL_DOMAIN}"
 
             if dry_run:
@@ -231,7 +301,7 @@ async def seed(count: int, dry_run: bool) -> None:
         if not dry_run:
             await db.commit()
 
-        print(f"\nГотово: создано {created}, пропущено (уже существуют) {skipped}.")
+        print(f"\nГотово: создано {created}, пропущено (нет свободных имён) {skipped}.")
         if created and not dry_run:
             print(f"Пароль у всех демо-аккаунтов: {PASSWORD}")
 
@@ -240,10 +310,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--count", type=int, default=30, help="Сколько демо-пользователей создать (по умолчанию 30)")
     parser.add_argument("--dry-run", action="store_true", help="Ничего не пишет в БД, только показывает, что было бы создано")
+    parser.add_argument("--undo", action="store_true", help="Удалить всех ранее созданных этим скриптом демо-пользователей вместе с их командами")
     args = parser.parse_args()
 
-    if args.count > len(ADJECTIVES) * len(NOUNS):
-        print(f"--count не может быть больше {len(ADJECTIVES) * len(NOUNS)} (кончатся уникальные названия команд)")
+    if args.undo:
+        asyncio.run(undo())
+        sys.exit(0)
+
+    if args.count > len(TEAM_NAMES) or args.count > len(FIRST_NAMES):
+        print(f"--count не может быть больше {min(len(TEAM_NAMES), len(FIRST_NAMES))} (кончатся уникальные имена)")
         sys.exit(1)
 
     asyncio.run(seed(args.count, args.dry_run))
