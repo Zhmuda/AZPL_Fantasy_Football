@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Layout/Footer";
+import BackgroundDecor from "./components/BackgroundDecor";
 import AuthPage from "./pages/Auth/AuthPage";
 import PlayersPage from "./pages/Players/PlayersPage";
 import MyTeamPage from "./pages/MyTeam/MyTeamPage";
@@ -13,6 +14,7 @@ import LeaguesPage from "./pages/Leagues/LeaguesPage";
 export default function App() {
   return (
     <AuthProvider>
+      <BackgroundDecor />
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route path="*" element={<Layout />} />

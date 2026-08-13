@@ -18,8 +18,11 @@ i18n
     fallbackLng: "ru",
     supportedLngs: ["ru", "en", "az"],
     nonExplicitSupportedLngs: true,
+    // No "navigator" here on purpose — a first-time visitor should land on
+    // Russian regardless of browser/OS locale. Only an explicit choice via
+    // the language switcher (saved to localStorage) should ever change it.
     detection: {
-      order: ["localStorage", "navigator"],
+      order: ["localStorage"],
       lookupLocalStorage: "lang",
       caches: ["localStorage"],
     },

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
+import LanguageSwitcher from "../../components/Layout/LanguageSwitcher";
 import s from "./AuthPage.module.css";
 
 export default function AuthPage() {
@@ -44,6 +45,9 @@ export default function AuthPage() {
   return (
     <div className={s.page}>
       <div className={s.card}>
+        <div className={s.langRow}>
+          <LanguageSwitcher />
+        </div>
         <div className={s.header}>
           <span className={s.emoji}>⚽</span>
           <h1>{t("auth.title")}</h1>
