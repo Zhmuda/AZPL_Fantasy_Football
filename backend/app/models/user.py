@@ -21,6 +21,11 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
+    # Password reset — no email delivery, so the code just sits here for the
+    # site owner to read in the admin panel and relay to the user manually.
+    reset_code: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    reset_code_expires: Mapped[datetime | None] = mapped_column(nullable=True)
+
     fantasy_teams: Mapped[list["FantasyTeam"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:

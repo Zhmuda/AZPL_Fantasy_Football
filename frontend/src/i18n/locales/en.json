@@ -62,7 +62,18 @@
     "loading": "Loading...",
     "submitLogin": "Log in",
     "submitRegister": "Create account",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "forgotLink": "Forgot password?",
+    "forgotTitle": "Reset password",
+    "forgotSubtitle": "Request a code, then contact support (see footer) — we'll send it to your email",
+    "requestCode": "Request code",
+    "requestSent": "Done! Contact support — we'll send the reset code to this email",
+    "code": "Reset code",
+    "codePlaceholder": "ABC123",
+    "newPassword": "New password",
+    "confirmReset": "Reset password",
+    "resetSuccess": "Password changed! You can log in now",
+    "backToLogin": "← Back to login"
   },
   "players": {
     "title": "Players",

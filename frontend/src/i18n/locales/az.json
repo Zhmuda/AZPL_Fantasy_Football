@@ -62,7 +62,18 @@
     "loading": "Yüklənir...",
     "submitLogin": "Daxil ol",
     "submitRegister": "Hesab yarat",
-    "genericError": "Xəta baş verdi. Yenidən cəhd edin."
+    "genericError": "Xəta baş verdi. Yenidən cəhd edin.",
+    "forgotLink": "Şifrəni unutmusunuz?",
+    "forgotTitle": "Şifrəni bərpa et",
+    "forgotSubtitle": "Kodu tələb edin, sonra dəstək xidmətinə yazın (footer-ə baxın) — kodu email-inizə göndərəcəyik",
+    "requestCode": "Kod tələb et",
+    "requestSent": "Hazırdır! Dəstək xidmətinə yazın — kodu bu email-ə göndərəcəyik",
+    "code": "Bərpa kodu",
+    "codePlaceholder": "ABC123",
+    "newPassword": "Yeni şifrə",
+    "confirmReset": "Şifrəni sıfırla",
+    "resetSuccess": "Şifrə dəyişdirildi! İndi daxil ola bilərsiniz",
+    "backToLogin": "← Girişə qayıt"
   },
   "players": {
     "title": "Oyunçular",

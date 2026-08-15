@@ -62,7 +62,18 @@
     "loading": "Загрузка...",
     "submitLogin": "Войти",
     "submitRegister": "Создать аккаунт",
-    "genericError": "Ошибка. Попробуйте ещё раз."
+    "genericError": "Ошибка. Попробуйте ещё раз.",
+    "forgotLink": "Забыли пароль?",
+    "forgotTitle": "Восстановление пароля",
+    "forgotSubtitle": "Запросите код, затем напишите в поддержку (см. футер) — вышлем его на ваш email",
+    "requestCode": "Запросить код",
+    "requestSent": "Готово! Обратитесь в поддержку — мы вышлем код сброса на этот email",
+    "code": "Код сброса",
+    "codePlaceholder": "ABC123",
+    "newPassword": "Новый пароль",
+    "confirmReset": "Сбросить пароль",
+    "resetSuccess": "Пароль изменён! Теперь можно войти",
+    "backToLogin": "← Назад ко входу"
   },
   "players": {
     "title": "Игроки",

@@ -21,10 +21,14 @@ from app.models.synclog import SyncLog
 
 
 class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.username, User.email, User.is_admin, User.is_active, User.created_at]
+    column_list = [
+        User.id, User.username, User.email, User.is_admin, User.is_active, User.created_at,
+        User.reset_code, User.reset_code_expires,
+    ]
     column_labels = {
         User.username: "Имя пользователя", User.email: "Email",
         User.is_admin: "Админ", User.is_active: "Активен", User.created_at: "Создан",
+        User.reset_code: "Код сброса пароля", User.reset_code_expires: "Код действует до",
     }
     column_searchable_list = [User.username, User.email]
     column_sortable_list = [User.id, User.created_at]

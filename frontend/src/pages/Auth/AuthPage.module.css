@@ -69,6 +69,33 @@
   font-size: 13px;
 }
 
+.success {
+  padding: 10px 12px;
+  background: rgba(63, 185, 80, .1);
+  border: 1px solid rgba(63, 185, 80, .3);
+  border-radius: 8px;
+  color: var(--green, #3fb950);
+  font-size: 13px;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: -4px 0 4px;
+}
+
+.linkBtn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 4px;
+  transition: color .15s;
+}
+.linkBtn:hover { color: var(--primary); }
+
 .submit {
   padding: 11px;
   background: var(--primary);

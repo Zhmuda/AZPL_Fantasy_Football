@@ -40,8 +40,17 @@ export function AuthProvider({ children }) {
       new_password: newPassword,
     });
 
+  const requestPasswordReset = (email) =>
+    api.post("/auth/password-reset/request", { email });
+
+  const confirmPasswordReset = (email, code, newPassword) =>
+    api.post("/auth/password-reset/confirm", { email, code, new_password: newPassword });
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, changePassword }}>
+    <AuthContext.Provider value={{
+      user, loading, login, register, logout, changePassword,
+      requestPasswordReset, confirmPasswordReset,
+    }}>
       {children}
     </AuthContext.Provider>
   );
