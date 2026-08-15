@@ -4,7 +4,7 @@ from celery_app import app
 from db import get_session
 from models import Match, Player, MatchEvent, PlayerMatchStat
 from sofascore import provider
-from sofascore.parsers import parse_incidents, parse_lineups
+from sofascore.parsers import parse_incidents, parse_lineups, compute_minutes_played
 from sync_log import log_error
 
 logger = logging.getLogger(__name__)
@@ -116,6 +116,12 @@ def _do_sync_match_stats(match: Match, session, active_provider: str):
             stat.penalty_miss += 1
         elif ev["event_type"] == "penalty_save":
             stat.penalty_save += 1
+
+    # Minutes played aren't in SofaScore's stats block for this competition —
+    # derive them from the substitution/red-card events we just parsed.
+    minutes_map = compute_minutes_played(lineups_raw, events)
+    for player_id, stat in stat_map.items():
+        stat.minutes_played = minutes_map.get(player_id, stat.minutes_played)
 
     # Determine clean sheets
     home_conceded = match.away_score or 0

@@ -117,6 +117,47 @@ def parse_incidents(incidents: list[dict]) -> dict:
     return events
 
 
+def compute_minutes_played(lineups: dict, events: list[dict]) -> dict[int, int]:
+    """SofaScore's per-player `statistics.minutesPlayed` is missing entirely
+    for lower-tier competitions like AZPL (the lineup entries only carry
+    player/team/position, no stats block) — derive minutes from the
+    substitution and red-card incidents instead, which are always present."""
+    MATCH_LENGTH = 90
+
+    starters: set[int] = set()
+    bench: set[int] = set()
+    for side in ("home", "away"):
+        for entry in lineups.get(side, {}).get("players", []):
+            player_id = (entry.get("player") or {}).get("id")
+            if not player_id:
+                continue
+            (bench if entry.get("substitute") else starters).add(player_id)
+
+    sub_in: dict[int, int] = {}
+    sub_out: dict[int, int] = {}
+    red_card: dict[int, int] = {}
+    for ev in events:
+        minute = ev.get("minute") or 0
+        if ev["event_type"] == "sub_in":
+            sub_in[ev["player_id"]] = minute
+        elif ev["event_type"] == "sub_out":
+            sub_out[ev["player_id"]] = minute
+        elif ev["event_type"] == "red_card":
+            red_card[ev["player_id"]] = minute
+
+    minutes: dict[int, int] = {}
+    for player_id in starters:
+        end = min(sub_out.get(player_id, MATCH_LENGTH), red_card.get(player_id, MATCH_LENGTH))
+        minutes[player_id] = max(0, end)
+    for player_id in bench:
+        if player_id not in sub_in:
+            continue  # never came on
+        end = min(sub_out.get(player_id, MATCH_LENGTH), red_card.get(player_id, MATCH_LENGTH))
+        minutes[player_id] = max(0, end - sub_in[player_id])
+
+    return minutes
+
+
 def parse_lineups(lineups: dict, match_id: int, home_team_id: int, away_team_id: int) -> tuple[list[dict], list[dict]]:
     """Returns (players_data, player_stats_data)."""
     players = []
