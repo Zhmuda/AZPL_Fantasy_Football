@@ -116,6 +116,52 @@ async def my_picks(
         .where(FantasyPick.fantasy_team_id == team.id, FantasyPick.round_id == round_id)
         .order_by(FantasyPick.slot)
     )
+    picks = result.scalars().all()
+    if not picks:
+        picks = await _carry_forward_picks(team, round_id, db)
+    return picks
+
+
+async def _carry_forward_picks(team: FantasyTeam, round_id: int, db: AsyncSession) -> list[FantasyPick]:
+    """A round with no picks yet almost always means a new round just started,
+    not that the user has no squad — clone the squad forward from their most
+    recent round instead of forcing a rebuild from scratch. This also resets
+    the transfer budget for the round, since replace_my_picks's MAX_TRANSFERS
+    check compares against whatever's stored here."""
+    target_round = await db.get(Round, round_id)
+    if not target_round:
+        return []
+
+    prev_result = await db.execute(
+        select(FantasyPick)
+        .join(Round, FantasyPick.round_id == Round.id)
+        .where(FantasyPick.fantasy_team_id == team.id, Round.number < target_round.number)
+        .order_by(Round.number.desc())
+    )
+    prev_picks = prev_result.scalars().all()
+    if not prev_picks:
+        return []
+
+    latest_round_id = prev_picks[0].round_id
+    for p in prev_picks:
+        if p.round_id != latest_round_id:
+            continue
+        db.add(FantasyPick(
+            fantasy_team_id=team.id,
+            player_id=p.player_id,
+            round_id=round_id,
+            slot=p.slot,
+            is_captain=p.is_captain,
+            is_vice_captain=p.is_vice_captain,
+        ))
+    await db.commit()
+
+    result = await db.execute(
+        select(FantasyPick)
+        .options(selectinload(FantasyPick.player).selectinload(Player.team))
+        .where(FantasyPick.fantasy_team_id == team.id, FantasyPick.round_id == round_id)
+        .order_by(FantasyPick.slot)
+    )
     return result.scalars().all()
 
 
